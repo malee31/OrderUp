@@ -1,3 +1,6 @@
+/* TODO: Download font locally */
+@import url("https://fonts.googleapis.com/css2?family=Nunito&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -9,7 +12,9 @@
 	}
 
 	html,
-	body {
+	body,
+	#root {
 		height: 100%;
+		font-family: "Nunito", sans-serif;
 	}
 }

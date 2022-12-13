@@ -2,24 +2,27 @@ import receiptPNG from "../images/receipt-printer.png";
 
 export default function Home() {
 	return (
-		<main>
-			<section>
-				<div className="home-hero-content">
-					<h1>OrderUp</h1>
-					<h2>On The Go, At Your Own Pace</h2>
-					<p>
-						View the menu on your phone and place your order whenever you are ready!<br/>
+		<>
+			<section className="w-full h-full flex flex-col-reverse md:flex-row">
+				<div className="md:w-3/5 h-full px-8 py-4 flex flex-col justify-center">
+					<h1 className="text-4xl">OrderUp</h1>
+					<h2 className="text-xl text-gray-600 mt-2 mb-1 px-1">On The Go, At Your Own Pace</h2>
+					<p className="text-lg px-2">
+						View the menu on your phone and place your order whenever you are ready!
 						Your order will be sent directly to the back where it will be prepared and brought right out to you shortly!
 					</p>
+					<div className="flex flex-row">
+						<button className="mt-4 px-4 py-2 text-xl bg-orange-300 hover:scale-105 transition-[transform] rounded">Order Now</button>
+					</div>
 				</div>
-				<div className="home-hero-visuals">
+				<div className="bg-orange-400 md:w-2/5 h-full px-4 py-8 flex flex-col justify-center items-center">
 					<img
+						className="w-full max-w-[400px]"
 						src={receiptPNG}
-						alt="Receipt Icon"
+						alt="Receipt Printer"
 					/>
 				</div>
 			</section>
-			OrderUp
-		</main>
+		</>
 	)
 }
