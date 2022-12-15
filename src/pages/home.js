@@ -1,3 +1,4 @@
+import {Link} from "react-router-dom";
 import receiptPNG from "../images/receipt-printer.png";
 
 export default function Home() {
@@ -12,17 +13,19 @@ export default function Home() {
 						Your order will be sent directly to the back where it will be prepared and brought right out to you shortly!
 					</p>
 					<div className="flex flex-row">
-						<button className="mt-4 px-4 py-2 text-xl bg-orange-300 hover:scale-105 transition-[transform] rounded">Order Now</button>
+						<Link to="/menu" className="block mt-4">
+							<button className="px-4 py-2 text-xl bg-orange-300 hover:scale-105 transition-[transform] rounded">Order Now</button>
+						</Link>
 					</div>
 				</div>
-				<div className="bg-orange-400 md:w-2/5 h-full px-4 py-8 flex flex-col justify-center items-center">
+				<div className="bg-orange-400 md:w-2/5 h-full px-4 py-8 flex flex-col justify-center items-center overflow-hidden">
 					<img
-						className="w-full max-w-[400px]"
+						className="h-full md:h-auto md:w-full max-w-[400px]"
 						src={receiptPNG}
 						alt="Receipt Printer"
 					/>
 				</div>
 			</section>
 		</>
-	)
+	);
 }

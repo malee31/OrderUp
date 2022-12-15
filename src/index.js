@@ -1,9 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
 import reportWebVitals from './reportWebVitals';
-import Home from "./pages/home";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import './index.css';
+import Home from "./pages/home";
+import Menu from "./pages/menu";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -12,6 +13,7 @@ root.render(
 			<Routes>
 				<Route exact path="/" element={<Home/>}/>
 				<Route exact path="/home" element={<Home/>}/>
+				<Route exact path="/menu" element={<Menu/>}/>
 			</Routes>
 		</BrowserRouter>
 	</React.StrictMode>
