@@ -7,7 +7,8 @@ class MenuItem(models.Model):
 
 
 class Order(models.Model):
-    order_number = models.PositiveBigIntegerField(null=False, blank=False)
+    order_number = models.AutoField(primary_key=True)
+    placed = models.BooleanField(null=False, blank=False, default=False)
     fulfilled = models.BooleanField(null=False, blank=False, default=False)
     # Use Order.items to access all ItemOrder instances
 
