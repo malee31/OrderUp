@@ -9,31 +9,24 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
+        ('order', '0001_initial'),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='MenuItem',
+            name='Cart',
             fields=[
-                ('item_id', models.AutoField(primary_key=True, serialize=False)),
-                ('name', models.CharField(max_length=100)),
-                ('description', models.CharField(default='', max_length=300)),
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('cart_id', models.CharField(max_length=100, unique=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Order',
-            fields=[
-                ('order_number', models.AutoField(primary_key=True, serialize=False)),
-                ('fulfilled', models.BooleanField(default=False)),
-            ],
-        ),
-        migrations.CreateModel(
-            name='ItemOrder',
+            name='CartItemOrder',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('count', models.PositiveIntegerField(default=0)),
+                ('cart', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='items', to='cart.cart')),
                 ('item', models.ForeignKey(on_delete=django.db.models.deletion.RESTRICT, to='order.menuitem')),
-                ('order', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='items', to='order.order')),
             ],
             options={
                 'abstract': False,

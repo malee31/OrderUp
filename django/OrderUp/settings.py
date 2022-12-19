@@ -27,6 +27,7 @@ ALLOWED_HOSTS = []
 # Application definition
 INSTALLED_APPS = [
     'order',
+    'cart',
     # 'menu',
     'django.contrib.admin',
     'django.contrib.auth',

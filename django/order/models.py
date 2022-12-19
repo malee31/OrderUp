@@ -2,13 +2,9 @@ from django.db import models
 
 
 class MenuItem(models.Model):
+    item_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100, null=False, blank=False)
     description = models.CharField(max_length=300, default="")
-
-
-class Cart(models.Model):
-    id_number = models.CharField(max_length=100, null=False, blank=False, unique=True)
-    # Use Cart.items to access all CartItemOrder instances
 
 
 class Order(models.Model):
@@ -26,10 +22,4 @@ class ItemOrderTemplate(models.Model):
 
 
 class ItemOrder(ItemOrderTemplate):
-    # TODO: Check if adding not null or blank is possible
-    order = models.ForeignKey(Order, models.CASCADE, related_name="items")
-
-
-class CartItemOrder(ItemOrderTemplate):
-    # TODO: Check if adding not null or blank is possible
-    cart = models.ForeignKey(Cart, models.CASCADE, related_name="items")
+    order = models.ForeignKey(Order, models.CASCADE, null=False, blank=False, related_name="items")

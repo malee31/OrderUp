@@ -16,6 +16,7 @@ def place_order(request, order_number):
     pass
 
 
+# Unused unless a staff section is created
 def add_item(request, order_number, item_id):
     """Adds an item to the order. Changes the number of items if the item is already in the order"""
     print(f"Item added to order [Order {order_number} ← Item {item_id}]")
