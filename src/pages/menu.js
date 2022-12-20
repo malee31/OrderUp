@@ -82,7 +82,7 @@ function MenuItem({ name, item_id, description }) {
 	};
 
 	return (
-		<div className="w-full max-w-[1000px] px-4 py-2 mx-auto my-2 rounded-md shadow-lg bg-white border-transparent border-2 transition-[border-color] hover:border-orange-200">
+		<div className="w-full max-w-[1000px] px-4 py-2 mx-auto my-4 rounded-md shadow-md bg-slate-50 border-transparent border-2 transition-[box-shadow,background-color] hover:shadow-lg hover:bg-white">
 			<h3 className="text-xl">{name}</h3>
 			<hr/>
 			<div className="w-100 min-h-[4rem] p-1 relative">
@@ -97,7 +97,7 @@ function MenuItem({ name, item_id, description }) {
 					Add to Cart
 				</div>
 				<button
-					className="px-2 py-1 absolute bottom-0 right-0 bg-orange-400 rounded"
+					className="px-2 py-1 absolute bottom-0 right-0 bg-orange-300 rounded transition-[box-shadow] hover:shadow-md"
 					onClick={() => addItem({
 						item_id: item_id,
 						name: name,
