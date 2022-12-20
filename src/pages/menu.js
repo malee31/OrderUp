@@ -1,4 +1,4 @@
-import { createContext, useCallback, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
 
 const CartContext = createContext({});
 
@@ -66,6 +66,21 @@ function MenuView() {
 }
 
 function MenuItem({ name, item_id, description }) {
+	const cart = useContext(CartContext);
+	const addItem = item => {
+		const cartItemClone = [...cart.items];
+		const increment = cartItemClone.find(cartItem => cartItem.item_id === item.item_id);
+		if(increment) {
+			increment.count++;
+		} else {
+			cartItemClone.push({
+				...item,
+				count: 1
+			});
+		}
+		cart.updateCart({ items: cartItemClone });
+	};
+
 	return (
 		<div className="w-full max-w-[1000px] px-4 py-2 mx-auto my-2 rounded-md shadow-lg bg-white border-transparent border-2 transition-[border-color] hover:border-orange-200">
 			<h3 className="text-xl">{name}</h3>
@@ -83,7 +98,11 @@ function MenuItem({ name, item_id, description }) {
 				</div>
 				<button
 					className="px-2 py-1 absolute bottom-0 right-0 bg-orange-400 rounded"
-					onClick={() => console.log(`Request to add ${name} [item_id: ${item_id}]`)}
+					onClick={() => addItem({
+						item_id: item_id,
+						name: name,
+						description: description
+					})}
 				>
 					Add to Cart
 				</button>
