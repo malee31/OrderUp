@@ -1,34 +1,11 @@
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
-
-const CartContext = createContext({});
-
+import { useState } from "react";
+import CartProvider, { useCart } from "../components/data-structures/CartData";
 
 export default function Menu() {
-	const [cart, setCart] = useState({
-		cartId: "DEMO",
-		items: [],
-		loaded: false
-	});
-
-	const updateCart = useCallback(updateSlice =>
-		setCart(prevState => {
-			return {
-				...prevState,
-				...updateSlice
-			}
-		}), [setCart]);
-
-	const cartValue = useMemo(() => {
-		return {
-			...cart,
-			updateCart
-		};
-	}, [cart, updateCart]);
-
 	return (
-		<CartContext.Provider value={cartValue}>
+		<CartProvider>
 			<MenuView/>
-		</CartContext.Provider>
+		</CartProvider>
 	);
 }
 
@@ -66,7 +43,8 @@ function MenuView() {
 }
 
 function MenuItem({ name, item_id, description }) {
-	const cart = useContext(CartContext);
+	const cart = useCart();
+
 	const addItem = item => {
 		const cartItemClone = [...cart.items];
 		const increment = cartItemClone.find(cartItem => cartItem.item_id === item.item_id);
