@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CartProvider, { useCart } from "../components/data-structures/CartData";
+import Cart from "../components/modal-like/Cart";
 
 export default function Menu() {
 	return (
@@ -9,24 +10,47 @@ export default function Menu() {
 	);
 }
 
+/**
+ * TODO: Should load items from the database in the future (Optional: Retry when fail)
+ * @async
+ * @return {Item[]}
+ */
+async function loadItems() {
+	return await new Promise(resolve => {
+		// 1 second timeout before returning test data for now
+		setTimeout(() => {
+			resolve([
+				{
+					item_id: "kjdgf",
+					name: "Cake",
+					description: "Delicious cake"
+				},
+				{
+					item_id: "asghdag",
+					name: "Cake",
+					description: "Delicious cake"
+				}
+			]);
+		}, 1000);
+	})
+}
+
 function MenuView() {
-	const [menuItems, setMenuItems] = useState([
-		{
-			item_id: "kjdgf",
-			name: "Cake",
-			description: "Delicious cake"
-		},
-		{
-			item_id: "asghdag",
-			name: "Cake",
-			description: "Delicious cake"
-		},
-	]);
+	const [menuItems, setMenuItems] = useState([]);
 	const [loading, setLoading] = useState(true);
+	const [showCart, setShowCart] = useState(false);
 	// TODO: Load in menu items
+	useEffect(() => {
+		loadItems()
+			.then(items => {
+				setMenuItems(items);
+				setLoading(false);
+			})
+	}, []);
 
 	return (
-		<main className="w-full h-full px-8 py-8 overflow-y-auto bg-gray-100">
+		<main className="w-full h-full px-8 py-8 overflow-y-auto bg-gray-100 relative">
+			<Cart show={showCart} setShow={setShowCart}/>
 			<h1 className="text-center text-3xl">
 				Order From Our Extensive Menu
 			</h1>

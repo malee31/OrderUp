@@ -18,3 +18,12 @@
 		font-family: "Nunito", sans-serif;
 	}
 }
+
+@layer utilities {
+	.text-overflow-plus {
+		/*noinspection CssOverwrittenProperties*/
+		text-overflow: ellipsis;
+		/*noinspection CssOverwrittenProperties*/
+		text-overflow: "+";
+	}
+}
