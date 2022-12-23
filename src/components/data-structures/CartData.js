@@ -18,13 +18,19 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
  * @property {CartItem[]} items - Array of items in a cart and their counts
  */
 
-/** @type Context<CartData>|Context<{}> */
+/**
+ * @typedef {Object & CartData} CartContextValue
+ * @property {function} updateCart - Overwrites the current cart with the portion of data given to this function. Unspecified properties are unaffected
+ * @property {function} addItem - Given an item object, the item is added to the cart with a count of 1 or the count is increased
+ */
+
+/** @type Context<CartContextValue>|Context<{}> */
 const CartContext = createContext({});
 
 
 /**
  * Allows read and write access to the current cart
- * @return {CartData}
+ * @return {CartContextValue}
  */
 export function useCart() {
 	// noinspection JSCheckFunctionSignatures
@@ -46,9 +52,24 @@ export default function CartProvider({ children }) {
 			}
 		}), [setCart]);
 
+	const addItem = useCallback(item => {
+		const cartItemClone = [...cart.items];
+		const incrementItem = cartItemClone.find(cartItem => cartItem.item_id === item.item_id);
+		if(incrementItem) {
+			incrementItem.count++;
+		} else {
+			cartItemClone.push({
+				...item,
+				count: 1
+			});
+		}
+		updateCart({ items: cartItemClone });
+	}, [updateCart, cart.items]);
+
 	const cartValue = useMemo(() => {
 		return {
 			...cart,
+			addItem,
 			updateCart
 		};
 	}, [cart, updateCart]);
@@ -57,7 +78,7 @@ export default function CartProvider({ children }) {
 	useEffect(() => {
 		console.log(`Attempt to fetch cart ${cartValue.cartId}`);
 		fetch(`/cart/${cartValue.cartId}`)
-			.then(res => res.text())
+			.then(res => res.json())
 			.then(console.log);
 	}, [cartValue.cartId]);
 

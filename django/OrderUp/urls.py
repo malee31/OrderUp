@@ -18,6 +18,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),  # Default admin urls
+    path('api-auth/', include('rest_framework.urls')),  # Default Django Rest Framework urls
 
     # Paths to other parts of the app
     path('order/', include('order.urls')),  # All things order related

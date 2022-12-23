@@ -1,8 +1,8 @@
 from django.core.exceptions import ObjectDoesNotExist
-from django.core import serializers
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from order.models import Order, ItemOrder, MenuItem
 from .models import Cart, CartItemOrder
+from .serializers import CartSerializer
 
 
 def get_cart(request, cart_id):
@@ -16,7 +16,8 @@ def get_cart(request, cart_id):
         cart.save()
         print(f"New cart created [{cart.cart_id}]")
 
-    return HttpResponse(serializers.serialize("json", cart))
+    print(f"Info: {CartSerializer(cart).data}")
+    return JsonResponse(CartSerializer(cart).data)
 
 
 def place_order(request, cart_id):
