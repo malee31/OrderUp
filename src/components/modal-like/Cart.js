@@ -14,8 +14,6 @@ export default function Cart({ show, setShow }) {
 		if(!sectionRef.current || !buttonRef.current) return;
 
 		const listener = e => {
-			// console.log(`Button Click: ${clickIn(e, buttonRef.current)}`)
-			// console.log(`Section Click: ${clickIn(e, sectionRef.current)}`)
 			if(!clickInsideOf(buttonRef.current, e) && !clickInsideOf(sectionRef.current, e)) {
 				hideCart();
 			}

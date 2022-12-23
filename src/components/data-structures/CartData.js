@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 /**
  * @typedef {Object} Item - An item on the menu
@@ -52,6 +52,14 @@ export default function CartProvider({ children }) {
 			updateCart
 		};
 	}, [cart, updateCart]);
+
+	// Attempt to load cart from server
+	useEffect(() => {
+		console.log(`Attempt to fetch cart ${cartValue.cartId}`);
+		fetch(`/cart/${cartValue.cartId}`)
+			.then(res => res.text())
+			.then(console.log);
+	}, [cartValue.cartId]);
 
 	return (
 		<CartContext.Provider value={cartValue}>

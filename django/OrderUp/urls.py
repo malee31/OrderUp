@@ -21,4 +21,5 @@ urlpatterns = [
 
     # Paths to other parts of the app
     path('order/', include('order.urls')),  # All things order related
+    path('cart/', include('cart.urls')),  # All things cart related
 ]
