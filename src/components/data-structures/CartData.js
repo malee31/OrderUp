@@ -79,8 +79,41 @@ export default function CartProvider({ children }) {
 		console.log(`Attempt to fetch cart ${cartValue.cartId}`);
 		fetch(`/cart/${cartValue.cartId}`)
 			.then(res => res.json())
-			.then(console.log);
-	}, [cartValue.cartId]);
+			.then(loadedCart => {
+				console.log(loadedCart);
+				if(!loadedCart["cart_id"] || !loadedCart["items"]) {
+					console.warn("Could not find expected properties in loaded cart:");
+					console.dir(loadedCart);
+					return;
+				}
+				updateCart({ cartId: loadedCart["cart_id"], items: loadedCart["items"], loaded: true });
+			})
+			.catch(err => {
+				console.warn("Failed to load the cart:");
+				console.error(err);
+			});
+	}, [updateCart, cartValue.cartId]);
+
+	// Syncs cart with server
+	useEffect(() => {
+		// TODO: Remove unnecessary initial save that occurs as a result of loading the cart changing cartValue.items
+		fetch("/cart/sync", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				cart_id: cartValue.cartId,
+				items: cartValue.items
+			})
+		})
+			.then(res => res.text())
+			.then(console.log)
+			.catch(err => {
+				console.log("Unable to sync cart with server:");
+				console.error(err);
+			})
+	}, [cartValue.cartId, cartValue.items])
 
 	return (
 		<CartContext.Provider value={cartValue}>
