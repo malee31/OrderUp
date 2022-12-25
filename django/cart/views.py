@@ -63,9 +63,9 @@ def sync_cart(request):
     for item in cart_items:
         item_id = item["item_id"]
         try:
-            item_order = item_orders.all().get(item__item_id=item_id)
+            item_order = item_orders.all().get(item__item_id=int(item_id))
         except ObjectDoesNotExist:
-            item = MenuItem.objects.get(item_id=item_id)
+            item = MenuItem.objects.get(item_id=int(item_id))
             item_order = CartItemOrder(cart=cart, item=item, count=0)
             print(f"New Cart Item Order Created For [{item.name}]")
 

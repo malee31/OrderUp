@@ -21,6 +21,7 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),  # Default Django Rest Framework urls
 
     # Paths to other parts of the app
-    path('order/', include('order.urls')),  # All things order related
+    path('menu/', include('menu.urls')),  # All things menu related
     path('cart/', include('cart.urls')),  # All things cart related
+    path('order/', include('order.urls')),  # All things order related
 ]
