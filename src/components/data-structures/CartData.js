@@ -8,8 +8,9 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
  */
 
 /**
- * @typedef {Object & Item} CartItem - An item in the cart
- * @property {number} count - Number of the item in the cart. This is the only additional property in CartItem not in Item
+ * @typedef {Object} CartItem - An item in the cart
+ * @property {Item} item - The item in the cart
+ * @property {number} count - Number of the item in the cart
  */
 
 /**
@@ -54,12 +55,12 @@ export default function CartProvider({ children }) {
 
 	const addItem = useCallback(item => {
 		const cartItemClone = [...cart.items];
-		const incrementItem = cartItemClone.find(cartItem => cartItem.item_id === item.item_id);
+		const incrementItem = cartItemClone.find(cartItem => cartItem.item.item_id === item.item_id);
 		if(incrementItem) {
 			incrementItem.count++;
 		} else {
 			cartItemClone.push({
-				...item,
+				item: item,
 				count: 1
 			});
 		}
@@ -72,12 +73,12 @@ export default function CartProvider({ children }) {
 			addItem,
 			updateCart
 		};
-	}, [cart, updateCart]);
+	}, [cart, addItem, updateCart]);
 
 	// Attempt to load cart from server
 	useEffect(() => {
 		console.log(`Attempt to fetch cart ${cartValue.cartId}`);
-		fetch(`/cart/${cartValue.cartId}`)
+		fetch(`/cart/view/${cartValue.cartId}`)
 			.then(res => res.json())
 			.then(loadedCart => {
 				console.log(loadedCart);

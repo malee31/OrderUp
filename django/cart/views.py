@@ -21,7 +21,7 @@ def get_cart(request, cart_id):
         cart.save()
         print(f"New cart created [{cart.cart_id}]")
 
-    print(f"Info: {CartSerializer(cart).data}")
+    # print(f"Info: {CartSerializer(cart).data}")
     return JsonResponse(CartSerializer(cart).data)
 
 
@@ -40,7 +40,7 @@ def place_order(request, cart_id):
         order_item.save()
 
     # Convert all cart items into order items
-    print(f"Attempting to place [{cart_id}] as an Order")
+    print(f"Places [{cart_id}] as an Order")
     return HttpResponse(f"Cart Placed As Order [{finalized_order.order_number}]")
 
 
@@ -57,24 +57,25 @@ def sync_cart(request):
         return HttpResponse(f"Cart [{cart_id}] Not Found", status=404)
 
     item_orders = CartItemOrder.objects.filter(cart=cart)
-    print("Items located")
+    print("Items located for sync")
     # TODO: Handle item deletes (Not yet implemented on front end)
     # TODO: Test. Cannot test until menu items have been made
-    for item in cart_items:
-        item_id = item["item_id"]
+    for cart_item in cart_items:
+        cart_item_item = cart_item["item"]
+        item_id = cart_item_item["item_id"]
         try:
             item_order = item_orders.all().get(item__item_id=int(item_id))
         except ObjectDoesNotExist:
-            item = MenuItem.objects.get(item_id=int(item_id))
-            item_order = CartItemOrder(cart=cart, item=item, count=0)
-            print(f"New Cart Item Order Created For [{item.name}]")
+            menuitem = MenuItem.objects.get(item_id=int(item_id))
+            item_order = CartItemOrder(cart=cart, item=menuitem, count=0)
+            print(f"New Cart Item Order Created For [{menuitem.name}]")
 
-        if item_order.count != item["count"]:
-            print(f"Count Mismatch of {item_order.count} needing to sync to {item['count']}")
-            item_order.count = item["count"]
+        if item_order.count != cart_item["count"]:
+            print(f"Count Mismatch of {item_order.count} needing to sync to {cart_item['count']}")
+            item_order.count = cart_item["count"]
             item_order.save()
-            print(f"Cart Item Order Edited For [{item_order.name}]")
-            print(f"Cart Contents Changed [Cart {cart_id} ← Item {item_id}[{item_order.name}] x{item_order.count}]")
+            # print(f"Cart Item Order Edited For [{item_order.item.name}]")
+            print(f"Cart Contents Changed [Cart {cart_id} ← Item #{item_id} - [{item_order.item.name}] x{item_order.count}]")
 
     return HttpResponse("Cart Synced")
 

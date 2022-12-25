@@ -1,9 +1,10 @@
 import json
 
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from rest_framework.decorators import api_view
 
 from .models import MenuItem
+from .serializers import MenuItemSerializer
 
 
 @api_view(["POST"])
@@ -16,3 +17,11 @@ def add_menuitem(request):
     new_menuitem.save()
 
     return HttpResponse("Menu Item Added")
+
+
+@api_view(["GET"])
+def list_menuitem(request):
+    all_menuitems = MenuItem.objects.all()
+    return JsonResponse({
+        "items": MenuItemSerializer(all_menuitems, many=True).data
+    })

@@ -4,7 +4,8 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import './index.css';
 import Home from "./pages/home";
-import Menu from "./pages/menu";
+import Menu from "./pages/menu/menu";
+import MenuAdd from "./pages/menu/menu-add";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -14,6 +15,7 @@ root.render(
 				<Route exact path="/" element={<Home/>}/>
 				<Route exact path="/home" element={<Home/>}/>
 				<Route exact path="/menu" element={<Menu/>}/>
+				<Route exact path="/menu/add" element={<MenuAdd/>}/>
 			</Routes>
 		</BrowserRouter>
 	</React.StrictMode>

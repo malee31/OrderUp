@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import CartProvider, { useCart } from "../components/data-structures/CartData";
-import Cart from "../components/modal-like/Cart";
+import CartProvider, { useCart } from "../../components/data-structures/CartData";
+import Cart from "../../components/modal-like/Cart";
 
 export default function Menu() {
 	return (
@@ -16,23 +16,7 @@ export default function Menu() {
  * @return {Item[]}
  */
 async function loadItems() {
-	return await new Promise(resolve => {
-		// 1 second timeout before returning test data for now
-		setTimeout(() => {
-			resolve([
-				{
-					item_id: "kjdgf",
-					name: "Cake",
-					description: "Delicious cake"
-				},
-				{
-					item_id: "asghdag",
-					name: "Cake",
-					description: "Delicious cake"
-				}
-			]);
-		}, 1000);
-	})
+	return fetch("/menu/list").then(res => res.json()).then(result => result.items);
 }
 
 function MenuView() {

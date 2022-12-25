@@ -43,7 +43,7 @@ export default function Cart({ show, setShow }) {
 
 			{/* Cart Sidebar - Shows by sliding in from the right once toggled */}
 			<section
-				className={`absolute top-0 left-full h-full w-[380px] max-w-full flex flex-col bg-slate-100 z-10 transition-transform pointer-events-auto ${show ? "duration-500 ease-out -translate-x-full" : "duration-200 ease-linear translate-x-0"}`}
+				className={`absolute top-0 left-full w-full xs:w-[380px] max-w-full h-full flex flex-col bg-slate-100 z-10 transition-transform pointer-events-auto ${show ? "duration-500 ease-out -translate-x-full" : "duration-200 ease-linear translate-x-0"}`}
 				tabIndex={show ? 0 : -1}
 				aria-hidden={show}
 				ref={sectionRef}
@@ -62,20 +62,20 @@ export default function Cart({ show, setShow }) {
 				<div
 					className="w-full px-1.5 pt-3 pb-6 border-l border-slate-200 flex flex-grow flex-col overflow-y-auto "
 				>
-					{cart.items.map(cartItem => (<CartItem cartItem={cartItem} key={cartItem.item_id}/>))}
+					{cart.items.map(cartItem => (<CartItem item={cartItem.item} count={cartItem.count} key={cartItem.item.item_id}/>))}
 				</div>
 			</section>
 		</div>
 	);
 }
 
-function CartItem({ cartItem }) {
+function CartItem({ item, count }) {
 	return (
 		<div className="w-full px-4 pt-2 pb-3 mb-2 bg-slate-50 rounded">
 			<h3 className="text-lg mb-1 border-b border-slate-200">
-				{cartItem.name} x{cartItem.count}
+				{item.name} x{count}
 			</h3>
-			<p>{cartItem.description}</p>
+			<p>{item.description}</p>
 		</div>
 	);
 }
