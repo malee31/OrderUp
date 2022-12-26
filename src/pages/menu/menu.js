@@ -33,7 +33,7 @@ function MenuView() {
 	}, []);
 
 	return (
-		<main className="w-full h-full px-8 py-8 overflow-y-auto bg-gray-100 relative">
+		<main className={`w-full h-full px-8 py-8 bg-gray-100 relative ${loading ? "overflow-y-hidden" : "overflow-y-auto"}`}>
 			<Cart show={showCart} setShow={setShowCart}/>
 			<h1 className="text-center text-3xl">
 				Order From Our Extensive Menu
@@ -42,11 +42,46 @@ function MenuView() {
 				A large variety of options for you to choose from
 			</h2>
 			<hr className="mt-2 mb-4"/>
-			{loading && <p className="text-center text-gray-500">Loading...</p>}
+			{loading && Array(10).fill(0).map(() => <MenuItemShimmer/>)}
 			{menuItems.map(item => (
 				<MenuItem key={item.item_id} {...item}/>
 			))}
 		</main>
+	);
+}
+
+function MenuItemShimmer() {
+	const [numFullSpanLines] = useState(Array(Math.floor(Math.random() * 2)).fill("Loading..."));
+	const [numRepeatLoadSpan] = useState(Array(Math.floor(Math.random() * 5 + (4 - 2 * numFullSpanLines.length))).fill("Loading..."));
+
+	// Note: Render methods use indices as keys intentionally to silence the warning because the order does not matter and the state will not change
+	return (
+		<div
+			aria-busy={true}
+			aria-hidden={true}
+			className="w-full max-w-[1000px] px-4 py-2 mx-auto my-4 rounded-md shadow-md bg-slate-50 border-transparent border-2 transition-[box-shadow,background-color]"
+		>
+			<h3 className="animate-pulse bg-slate-200 text-transparent mb-1 text-xl">Loading...</h3>
+			<div className="w-100 min-h-[4rem] p-1 relative">
+				<p className="inline-block w-full">
+					{numFullSpanLines.map((text, index) => (
+						<span key={index} className="animate-pulse bg-slate-200 text-transparent mb-0.5 inline-block w-full">{text}</span>
+					))}
+					<span className="animate-pulse bg-slate-200 text-transparent mb-0.5 inline-block">{numRepeatLoadSpan.join(" ")}</span>
+
+					{/* Used as a spacer for the actual "Add to Cart" button below */}
+					<span
+						className="invisible inline-block align-text-top mb-1 px-2 py-1"
+						aria-hidden={true}
+					>
+						Add to Cart
+					</span>
+				</p>
+				<button className="animate-pulse text-transparent px-2 py-1 absolute bottom-0 right-0 bg-orange-300 rounded">
+					Add to Cart
+				</button>
+			</div>
+		</div>
 	);
 }
 
@@ -60,14 +95,15 @@ function MenuItem({ name, item_id, description }) {
 			<div className="w-100 min-h-[4rem] p-1 relative">
 				<p className="inline-block">
 					{description}
+
+					{/* Used as a spacer for the actual "Add to Cart" button below */}
+					<span
+						className="invisible inline-block align-text-top mb-1 px-2 py-1"
+						aria-hidden={true}
+					>
+						Add to Cart
+					</span>
 				</p>
-				<div
-					className="invisible inline-block px-2 py-1"
-					aria-hidden={true}
-				>
-					{/* Used as a spacer for the button below */}
-					Add to Cart
-				</div>
 				<button
 					className="px-2 py-1 absolute bottom-0 right-0 bg-orange-300 rounded transition-[box-shadow] hover:shadow-md"
 					onClick={() => cart.addItem({
