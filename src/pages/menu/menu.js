@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import CartProvider, { useCart } from "../../components/data-structures/CartData";
 import Cart from "../../components/modal-like/Cart";
 
@@ -42,7 +42,8 @@ function MenuView() {
 				A large variety of options for you to choose from
 			</h2>
 			<hr className="mt-2 mb-4"/>
-			{loading && Array(10).fill(0).map(() => <MenuItemShimmer/>)}
+			{/* Index as key is fine for silencing error here because order and count will never change */}
+			{loading && Array(10).fill(0).map((x, index) => <MenuItemShimmer key={index}/>)}
 			{menuItems.map(item => (
 				<MenuItem key={item.item_id} {...item}/>
 			))}
@@ -51,8 +52,9 @@ function MenuView() {
 }
 
 function MenuItemShimmer() {
-	const [numFullSpanLines] = useState(Array(Math.floor(Math.random() * 2)).fill("Loading..."));
-	const [numRepeatLoadSpan] = useState(Array(Math.floor(Math.random() * 5 + (4 - 2 * numFullSpanLines.length))).fill("Loading..."));
+	const numFullSpanLines = useRef(Array(Math.floor(Math.random() * 2)).fill("Loading..."));
+	const numRepeatLoadSpan = useRef(Array(Math.floor(Math.random() * 5 + (4 - 2 * numFullSpanLines.current.length))).fill("Loading..."));
+	const titleWidth = useRef(Math.floor(Math.random() * 40 + 20));
 
 	// Note: Render methods use indices as keys intentionally to silence the warning because the order does not matter and the state will not change
 	return (
@@ -61,13 +63,13 @@ function MenuItemShimmer() {
 			aria-hidden={true}
 			className="w-full max-w-[1000px] px-4 py-2 mx-auto my-4 rounded-md shadow-md bg-slate-50 border-transparent border-2 transition-[box-shadow,background-color]"
 		>
-			<h3 className="animate-pulse bg-slate-200 text-transparent mb-1 text-xl">Loading...</h3>
+			<h3 className="animate-pulse bg-slate-200 text-transparent mb-1 text-xl" style={{width: `${titleWidth.current}%`}}>Loading...</h3>
 			<div className="w-100 min-h-[4rem] p-1 relative">
 				<p className="inline-block w-full">
-					{numFullSpanLines.map((text, index) => (
+					{numFullSpanLines.current.map((text, index) => (
 						<span key={index} className="animate-pulse bg-slate-200 text-transparent mb-0.5 inline-block w-full">{text}</span>
 					))}
-					<span className="animate-pulse bg-slate-200 text-transparent mb-0.5 inline-block">{numRepeatLoadSpan.join(" ")}</span>
+					<span className="animate-pulse bg-slate-200 text-transparent mb-0.5 inline-block">{numRepeatLoadSpan.current.join(" ")}</span>
 
 					{/* Used as a spacer for the actual "Add to Cart" button below */}
 					<span
