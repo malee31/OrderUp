@@ -100,7 +100,11 @@ export default function CartProvider({ children }) {
 
 	// Syncs cart with server
 	useEffect(() => {
+		// Avoid synching an empty cart before loading in the cart in the first place
+		if(!cartValue.loaded) return;
 		// TODO: Remove unnecessary initial save that occurs as a result of loading the cart changing cartValue.items
+
+
 		const syncRequestFunc = () => {
 			// console.log("Cart Syncing!")
 			return fetch("/cart/sync", {

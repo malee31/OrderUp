@@ -3,8 +3,8 @@ import { ReactComponent as ChevronRight } from "../../images/ChevronRight.svg";
 import { ReactComponent as CartIcon } from "../../images/Cart.svg";
 import { useCallback, useEffect, useRef, useState } from "react";
 import clickInsideOf from "../../utilities/clickInsideOf";
-import {ReactComponent as MinusIcon} from "../../images/Minus.svg";
-import {ReactComponent as PlusIcon} from "../../images/Plus.svg";
+import { ReactComponent as MinusIcon } from "../../images/Minus.svg";
+import { ReactComponent as PlusIcon } from "../../images/Plus.svg";
 
 export default function Cart({ show, setShow }) {
 	const cart = useCart();
@@ -17,6 +17,12 @@ export default function Cart({ show, setShow }) {
 
 		const listener = e => {
 			if(!clickInsideOf(buttonRef.current, e) && !clickInsideOf(sectionRef.current, e)) {
+				// Exclude click events that have detached from dom like removing from cart
+				if(!e.target.isConnected) {
+					// console.log("Not hiding from external click due to detached node");
+					return;
+				}
+				// console.log("Hiding from external click")
 				hideCart();
 			}
 		}
@@ -80,6 +86,7 @@ export default function Cart({ show, setShow }) {
  */
 function CartItem({ item, count }) {
 	const [countInputVal, setCountInputVal] = useState(count);
+	const [showRemoveModal, setShowRemoveModal] = useState(false);
 	const cart = useCart();
 	useEffect(() => {
 		// Resynchronizes the input value when an item is added to the cart from the menu
@@ -91,11 +98,13 @@ function CartItem({ item, count }) {
 		if(typeof newCount === "number") {
 			newCountVal = Math.max(0, newCount);
 			// Updating the count in cart will automatically update countInputVal due to useEffect but just to be explicit:
-			setCountInputVal(newCount);
+			setCountInputVal(Math.max(1, newCount));
+			// Minimum of 1 since 0 should bring up a confirmation below
 		}
 
 		if(newCountVal <= 0) {
 			// TODO: Delete item from cart (Confirmation?)
+			setShowRemoveModal(true);
 			console.log(`Request to delete ${item.name} from cart`);
 			return;
 		}
@@ -112,34 +121,64 @@ function CartItem({ item, count }) {
 		});
 	};
 
+	const removeItem = () => {
+		const newCartItems = [...cart.items];
+		const itemIndex = newCartItems.findIndex(cartItem => cartItem.item.item_id === item.item_id);
+		newCartItems.splice(itemIndex, 1);
+		cart.updateCart({
+			items: newCartItems
+		});
+	};
+
 	return (
-		<div className="w-full px-2 pt-2 pb-3 mb-2 bg-slate-50 rounded grid grid-rows-1 grid-cols-[minmax(0,_1fr)_auto]">
-			<h3 className="h-min text-lg mx-2 mb-1 border-b border-slate-200">
-				{item.name} x{count}
-			</h3>
-			<div className="pl-2 flex flex-col justify-center items-center">
-				<button
-					className="w-6 h-6 rounded-full shadow-md z-10 bg-slate-50 box-content border border-slate-200 hover:bg-slate-100"
-					onClick={() => updateCount(count - 1)}
-				>
-					<MinusIcon/>
-				</button>
-				<input
-					type="text"
-					inputMode="numeric"
-					pattern="\d*"
-					className="w-6 my-0.5 text-center bg-transparent"
-					onChange={e => !isNaN(Number(e.target.value)) && Number(e.target.value) >= 0 && setCountInputVal(Number(e.target.value))}
-					onBlur={updateCount}
-					value={countInputVal}
-				/>
-				<button
-					className="w-6 h-6 rounded-full shadow-md z-10 bg-orange-200 box-content border border-slate-200 hover:bg-orange-300"
-					onClick={() => updateCount(count + 1)}
-				>
-					<PlusIcon/>
-				</button>
+		<div className="w-full px-2 pt-2 pb-3 mb-2 bg-slate-50 rounded relative">
+			<CartItemDeleteConfirmation show={showRemoveModal} setShow={setShowRemoveModal} onConfirm={removeItem}/>
+			<div className="w-full h-full grid grid-rows-1 grid-cols-[minmax(0,_1fr)_auto]">
+				<h3 className="h-min text-lg mx-2 mb-1 border-b border-slate-200">
+					{item.name} x{count}
+				</h3>
+				<div className="pl-2 flex flex-col justify-center items-center z-10">
+					<button
+						className="w-6 h-6 rounded-full shadow-md z-10 bg-slate-50 box-content border border-slate-200 hover:bg-slate-100"
+						onClick={() => updateCount(count - 1)}
+					>
+						<MinusIcon/>
+					</button>
+					<input
+						type="text"
+						inputMode="numeric"
+						pattern="\d*"
+						className="w-6 my-0.5 text-center bg-transparent"
+						onChange={e => !isNaN(Number(e.target.value)) && Number(e.target.value) >= 0 && setCountInputVal(Number(e.target.value))}
+						onBlur={() => updateCount(countInputVal)}
+						value={countInputVal}
+					/>
+					<button
+						className="w-6 h-6 rounded-full shadow-md z-10 bg-orange-200 box-content border border-slate-200 hover:bg-orange-300"
+						onClick={() => updateCount(count + 1)}
+					>
+						<PlusIcon/>
+					</button>
+				</div>
 			</div>
 		</div>
 	);
+}
+
+function CartItemDeleteConfirmation({ show, setShow, onConfirm }) {
+	return (
+		<div
+			className={`absolute w-full h-full p-2 rounded bg-slate-200 flex flex-col justify-between transition-opacity ${show ? "z-20" : "opacity-0"}`}
+			aria-hidden={!show}
+		>
+			<div>
+				<h3 className="text-lg">Remove From Cart</h3>
+				<p className="text-sm">Are you sure you want to remove this from your cart?</p>
+			</div>
+			<div className="grid grid-rows-1 grid-cols-2 gap-1 justify-self-end">
+				<button className="rounded bg-slate-50" onClick={() => setShow(false)}>Cancel</button>
+				<button className="rounded bg-red-700 text-slate-50" onClick={onConfirm}>Remove</button>
+			</div>
+		</div>
+	)
 }
