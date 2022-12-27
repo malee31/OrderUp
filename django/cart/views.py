@@ -75,7 +75,7 @@ def sync_cart(request):
             item_order.count = cart_item["count"]
             item_order.save()
             # print(f"Cart Item Order Edited For [{item_order.item.name}]")
-            print(f"Cart Contents Changed [Cart {cart_id} ← Item #{item_id} - [{item_order.item.name}] x{item_order.count}]")
+            print(f"Cart Contents Changed [Cart {cart_id} <-- Item #{item_id} - [{item_order.item.name}] x{item_order.count}]")
 
     return HttpResponse("Cart Synced")
 

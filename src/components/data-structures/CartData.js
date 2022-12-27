@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 
 /**
  * @typedef {Object} Item - An item on the menu
@@ -95,25 +95,58 @@ export default function CartProvider({ children }) {
 			});
 	}, [updateCart, cartValue.cartId]);
 
+	const antiRaceConditionSyncQueue = useRef([]);
+	const antiRaceExecuting = useRef(false);
+
 	// Syncs cart with server
 	useEffect(() => {
 		// TODO: Remove unnecessary initial save that occurs as a result of loading the cart changing cartValue.items
-		fetch("/cart/sync", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				cart_id: cartValue.cartId,
-				items: cartValue.items
+		const syncRequestFunc = () => {
+			// console.log("Cart Syncing!")
+			return fetch("/cart/sync", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					cart_id: cartValue.cartId,
+					items: cartValue.items
+				})
 			})
-		})
-			.then(res => res.text())
-			.then(console.log)
-			.catch(err => {
-				console.log("Unable to sync cart with server:");
-				console.error(err);
-			})
+				.then(res => res.text())
+				.then(console.log)
+				.catch(err => {
+					console.log("Unable to sync cart with server:");
+					console.error(err);
+				})
+		};
+
+		const executeQueue = async () => {
+			// Prevent queue promises being run on by two calls at the same time
+			if(antiRaceExecuting.current) {
+				// console.log("Concurrent sync avoided");
+				return;
+			}
+			antiRaceExecuting.current = true;
+
+			while(antiRaceConditionSyncQueue.current.length) {
+				// Shortcut applied: Syncs always overwrite so only the last item in the queue matters (Outer while loop in case a new sync is added while this one is running)
+				while(antiRaceConditionSyncQueue.current.length > 1) {
+					// console.log("Sync Queue Shortcut Applied");
+					antiRaceConditionSyncQueue.current.shift();
+				}
+				// console.log("EXECUTE SYNC")
+				await antiRaceConditionSyncQueue.current.shift()();
+			}
+
+			// Re-enable execution
+			antiRaceExecuting.current = false;
+			// console.log("Sync Queue Cleared")
+		};
+
+		antiRaceConditionSyncQueue.current.push(syncRequestFunc);
+		// Silently execute queue
+		executeQueue().catch(() => {});
 	}, [cartValue.cartId, cartValue.items])
 
 	return (
