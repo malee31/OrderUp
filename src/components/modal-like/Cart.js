@@ -8,6 +8,7 @@ import { ReactComponent as PlusIcon } from "../../images/Plus.svg";
 
 export default function Cart({ show, setShow }) {
 	const cart = useCart();
+	const numCartItems = cart.items.reduce((prev, curr) => prev + curr.count, 0);
 	const showCart = useCallback(() => setShow(true), [setShow]);
 	const hideCart = useCallback(() => setShow(false), [setShow]);
 	const buttonRef = useRef();
@@ -44,7 +45,7 @@ export default function Cart({ show, setShow }) {
 				<CartIcon/>
 				<span className="absolute bottom-1.5 left-0 w-full px-1 text-center">
 					<span className="block mx-auto text-center truncate bg-slate-200 bg-opacity-50 text-overflow-plus">
-						{cart.items.reduce((prev, curr) => prev + curr.count, 0)}
+						{numCartItems}
 					</span>
 				</span>
 			</button>
@@ -72,6 +73,13 @@ export default function Cart({ show, setShow }) {
 				>
 					{cart.items.map(cartItem => (<CartItem item={cartItem.item} count={cartItem.count} key={cartItem.item.item_id}/>))}
 				</div>
+
+				<button
+					className="w-full px-6 py-3 bg-orange-300 hover:bg-orange-400 transition-colors group"
+					onClick={() => console.log("Attempt To Place Order")}
+				>
+					Place Order <span className="inline-block min-w-6 ml-0.5 px-2 h-6 rounded-full bg-orange-100 group-hover:bg-orange-200 transition-colors">{numCartItems}</span>
+				</button>
 			</section>
 		</div>
 	);
@@ -131,12 +139,23 @@ function CartItem({ item, count }) {
 	};
 
 	return (
-		<div className="w-full px-2 pt-2 pb-3 mb-2 bg-slate-50 rounded relative">
+		<div className="w-full mb-2 bg-slate-50 rounded relative">
 			<CartItemDeleteConfirmation show={showRemoveModal} setShow={setShowRemoveModal} onConfirm={removeItem}/>
-			<div className="w-full h-full grid grid-rows-1 grid-cols-[minmax(0,_1fr)_auto]">
-				<h3 className="h-min text-lg mx-2 mb-1 border-b border-slate-200">
-					{item.name} x{count}
-				</h3>
+			<div className="w-full h-full px-2 pt-2 pb-3 grid grid-rows-1 grid-cols-[minmax(0,_1fr)_auto]">
+				<div className="px-2">
+					<h3
+						title={item.name}
+						className="h-min text-lg mb-1 border-b border-slate-200 overflow-x-hidden text-ellipsis whitespace-nowrap"
+					>
+						{item.name}
+					</h3>
+					<button
+						className="text-md text-red-600 hover:text-red-700 transition-colors"
+						onClick={() => setShowRemoveModal(true)}
+					>
+						Remove
+					</button>
+				</div>
 				<div className="pl-2 flex flex-col justify-center items-center z-10">
 					<button
 						className="w-6 h-6 rounded-full shadow-md z-10 bg-slate-50 box-content border border-slate-200 hover:bg-slate-100"
@@ -168,7 +187,7 @@ function CartItem({ item, count }) {
 function CartItemDeleteConfirmation({ show, setShow, onConfirm }) {
 	return (
 		<div
-			className={`absolute w-full h-full p-2 rounded bg-slate-200 flex flex-col justify-between transition-opacity ${show ? "z-20" : "opacity-0"}`}
+			className={`absolute w-full h-full p-2 rounded bg-slate-200 flex flex-col justify-between transition-opacity ${show ? "z-20" : "opacity-0 pointer-events-none"}`}
 			aria-hidden={!show}
 		>
 			<div>
