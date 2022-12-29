@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import CartProvider, { useCart } from "../../components/data-structures/CartData";
-import Cart from "../../components/modal-like/Cart";
+import CartSidebar from "../../components/Cart/CartSidebar";
 
 export default function Menu() {
 	return (
@@ -46,7 +46,7 @@ function MenuView() {
 			{menuItems.map(item => (
 				<MenuItem key={item.item_id} {...item}/>
 			))}
-			<Cart show={showCart} setShow={setShowCart}/>
+			<CartSidebar show={showCart} setShow={setShowCart}/>
 		</main>
 	);
 }
