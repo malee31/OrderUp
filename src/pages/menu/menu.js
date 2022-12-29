@@ -34,7 +34,6 @@ function MenuView() {
 
 	return (
 		<main className={`w-full h-full px-8 py-8 bg-gray-100 relative ${loading ? "overflow-y-hidden" : "overflow-y-auto"}`}>
-			<Cart show={showCart} setShow={setShowCart}/>
 			<h1 className="text-center text-3xl">
 				Order From Our Extensive Menu
 			</h1>
@@ -47,6 +46,7 @@ function MenuView() {
 			{menuItems.map(item => (
 				<MenuItem key={item.item_id} {...item}/>
 			))}
+			<Cart show={showCart} setShow={setShowCart}/>
 		</main>
 	);
 }
@@ -61,7 +61,7 @@ function MenuItemShimmer() {
 		<div
 			aria-busy={true}
 			aria-hidden={true}
-			className="w-full max-w-[1000px] px-4 py-2 mx-auto my-4 rounded-md shadow-md bg-slate-50 border-transparent border-2 transition-[box-shadow,background-color]"
+			className="w-full max-w-[1000px] px-4 py-2 mx-auto my-4 rounded-md shadow-md bg-slate-50 border-transparent border-2 transition-[box-shadow,background-color] select-none"
 		>
 			<h3 className="animate-pulse bg-slate-200 text-transparent mb-1 text-xl" style={{width: `${titleWidth.current}%`}}>Loading...</h3>
 			<div className="w-100 min-h-[4rem] p-1 relative">
@@ -107,7 +107,7 @@ function MenuItem({ name, item_id, description }) {
 					</span>
 				</p>
 				<button
-					className="px-2 py-1 absolute bottom-0 right-0 bg-orange-300 rounded transition-[box-shadow] hover:shadow-md"
+					className="px-2 py-1 absolute bottom-0 right-0 bg-orange-300 rounded select-none transition-[box-shadow] hover:shadow-md"
 					onClick={() => cart.addItem({
 						item_id: item_id,
 						name: name,

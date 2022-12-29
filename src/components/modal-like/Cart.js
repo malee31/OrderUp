@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import clickInsideOf from "../../utilities/clickInsideOf";
 import { ReactComponent as MinusIcon } from "../../images/Minus.svg";
 import { ReactComponent as PlusIcon } from "../../images/Plus.svg";
+import { ReactComponent as RemoveIcon } from "../../images/Remove.svg";
 
 export default function Cart({ show, setShow }) {
 	const cart = useCart();
@@ -36,7 +37,7 @@ export default function Cart({ show, setShow }) {
 		<div className="fixed top-0 left-0 w-full h-full overflow-hidden z-10 pointer-events-none">
 			{/* Open Cart Button - Hides by sliding out to the right once clicked */}
 			<button
-				className={`absolute top-0 left-full w-12 h-12 p-1 bg-slate-200 rounded transition-transform z-10 pointer-events-auto ${!show ? "-translate-x-full" : "translate-x-0"}`}
+				className={`absolute top-0 left-full w-12 h-12 p-1 bg-slate-200 rounded z-10 pointer-events-auto transition-transform transition-colors hover:bg-slate-300 ${!show ? "-translate-x-full" : "translate-x-0 select-none"}`}
 				tabIndex={!show ? 0 : -1}
 				aria-hidden={!show}
 				onClick={showCart}
@@ -44,7 +45,7 @@ export default function Cart({ show, setShow }) {
 			>
 				<CartIcon/>
 				<span className="absolute bottom-1.5 left-0 w-full px-1 text-center">
-					<span className="block mx-auto text-center truncate bg-slate-200 bg-opacity-50 text-overflow-plus">
+					<span className="block mx-auto text-center truncate bg-slate-200 bg-opacity-50 text-overflow-plus select-none">
 						{numCartItems}
 					</span>
 				</span>
@@ -52,20 +53,22 @@ export default function Cart({ show, setShow }) {
 
 			{/* Cart Sidebar - Shows by sliding in from the right once toggled */}
 			<section
-				className={`absolute top-0 left-full w-full xs:w-[380px] max-w-full h-full flex flex-col bg-slate-100 z-10 transition-transform pointer-events-auto ${show ? "duration-500 ease-out -translate-x-full" : "duration-200 ease-linear translate-x-0"}`}
-				aria-hidden={show}
+				className={`absolute top-0 left-full w-full xs:w-[380px] max-w-full h-full flex flex-col bg-slate-100 z-10 transition-transform pointer-events-auto ${show ? "duration-500 ease-out -translate-x-full" : "duration-200 ease-linear translate-x-0 select-none"}`}
+				aria-hidden={!show}
 				ref={sectionRef}
 			>
 				<span className="inline-flex flex-row justify-start items-center w-full h-12 bg-slate-200 border-slate-200 border-b-2">
 					<button
-						className="w-12 h-12 p-1 mr-4 my-2 border-r-2 border-slate-300 rounded"
+						className="w-12 h-12 p-1 border-r-2 border-slate-300 transition-colors hover:bg-slate-300 rounded"
 						onClick={hideCart}
 						tabIndex={show ? 0 : -1}
 					>
 						<ChevronRight/>
 					</button>
-					<h2 className="text-2xl w-fit relative top-1">
+					<h2 className="text-2xl w-fit px-4 relative top-1">
 						Your Cart
+						{/* Cover Text From Normal Selection */}
+						<span className="absolute top-0 left-0 w-full h-full"/>
 					</h2>
 				</span>
 				<div
@@ -78,7 +81,7 @@ export default function Cart({ show, setShow }) {
 					className="w-full px-6 py-3 bg-orange-300 hover:bg-orange-400 transition-colors group"
 					onClick={() => console.log("Attempt To Place Order")}
 				>
-					Place Order <span className="inline-block min-w-6 ml-0.5 px-2 h-6 rounded-full bg-orange-100 group-hover:bg-orange-200 transition-colors">{numCartItems}</span>
+					Place Order <span className="inline-block min-w-6 ml-0.5 px-2 h-6 rounded-full bg-orange-100 group-hover:bg-orange-200 transition-colors select-none">{numCartItems}</span>
 				</button>
 			</section>
 		</div>
@@ -139,26 +142,26 @@ function CartItem({ item, count }) {
 	};
 
 	return (
-		<div className="w-full mb-2 bg-slate-50 rounded relative">
-			<CartItemDeleteConfirmation show={showRemoveModal} setShow={setShowRemoveModal} onConfirm={removeItem}/>
-			<div className="w-full h-full px-2 pt-2 pb-3 grid grid-rows-1 grid-cols-[minmax(0,_1fr)_auto]">
-				<div className="px-2">
+		<div className="w-full mb-2 bg-slate-50 rounded relative shadow hover:shadow-md transition-shadow">
+			<CartItemDeleteConfirmation itemName={item.name} show={showRemoveModal} setShow={setShowRemoveModal} onConfirm={removeItem}/>
+			<div className="w-full h-full grid grid-rows-1 grid-cols-[auto_minmax(0,_1fr)_auto]">
+				<button
+					className="w-8 h-full px-1 text-md text-slate-400 rounded-l border-r border-slate-200 hover:bg-red-700 hover:text-slate-50 transition-colors select-none"
+					onClick={() => setShowRemoveModal(true)}
+				>
+					<RemoveIcon/>
+				</button>
+				<div className="px-2 py-2">
 					<h3
 						title={item.name}
 						className="h-min text-lg mb-1 border-b border-slate-200 overflow-x-hidden text-ellipsis whitespace-nowrap"
 					>
 						{item.name}
 					</h3>
-					<button
-						className="text-md text-red-600 hover:text-red-700 transition-colors"
-						onClick={() => setShowRemoveModal(true)}
-					>
-						Remove
-					</button>
 				</div>
-				<div className="pl-2 flex flex-col justify-center items-center z-10">
+				<div className="px-2 py-2 flex flex-col justify-center items-center z-10">
 					<button
-						className="w-6 h-6 rounded-full shadow-md z-10 bg-slate-50 box-content border border-slate-200 hover:bg-slate-100"
+						className="w-6 h-6 rounded-full shadow-md z-10 bg-slate-50 box-content border border-slate-200 select-none hover:bg-slate-100"
 						onClick={() => updateCount(count - 1)}
 					>
 						<MinusIcon/>
@@ -173,7 +176,7 @@ function CartItem({ item, count }) {
 						value={countInputVal}
 					/>
 					<button
-						className="w-6 h-6 rounded-full shadow-md z-10 bg-orange-200 box-content border border-slate-200 hover:bg-orange-300"
+						className="w-6 h-6 rounded-full shadow-md z-10 bg-orange-200 box-content border border-slate-200 select-none hover:bg-orange-300"
 						onClick={() => updateCount(count + 1)}
 					>
 						<PlusIcon/>
@@ -184,20 +187,19 @@ function CartItem({ item, count }) {
 	);
 }
 
-function CartItemDeleteConfirmation({ show, setShow, onConfirm }) {
+function CartItemDeleteConfirmation({ show, setShow, onConfirm, itemName }) {
 	return (
 		<div
-			className={`absolute w-full h-full p-2 rounded bg-slate-200 flex flex-col justify-between transition-opacity ${show ? "z-20" : "opacity-0 pointer-events-none"}`}
+			className={`absolute w-full h-full rounded bg-slate-200 flex flex-col justify-between transition-opacity ${show ? "z-20" : "opacity-0 pointer-events-none select-none"}`}
 			aria-hidden={!show}
 		>
-			<div>
-				<h3 className="text-lg">Remove From Cart</h3>
-				<p className="text-sm">Are you sure you want to remove this from your cart?</p>
+			<div className="mt-2 px-4">
+				<h3 className="text-lg text-center leading-tight">Remove {itemName} From Cart?</h3>
 			</div>
-			<div className="grid grid-rows-1 grid-cols-2 gap-1 justify-self-end">
-				<button className="rounded bg-slate-50" onClick={() => setShow(false)}>Cancel</button>
-				<button className="rounded bg-red-700 text-slate-50" onClick={onConfirm}>Remove</button>
+			<div className="grid grid-rows-1 grid-cols-2 gap-0.5 justify-self-end">
+				<button className="py-1 rounded-bl bg-slate-50 transition-[filter] hover:brightness-105" onClick={() => setShow(false)}>Cancel</button>
+				<button className="py-1 rounded-br text-slate-50 bg-red-700 transition-[filter] hover:brightness-105" onClick={onConfirm}>Remove</button>
 			</div>
 		</div>
-	)
+	);
 }
