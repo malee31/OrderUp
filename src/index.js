@@ -6,6 +6,7 @@ import './index.css';
 import Home from "./pages/home";
 import Menu from "./pages/menu/menu";
 import MenuAdd from "./pages/menu/menu-add";
+import Orders from "./pages/orders";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -16,6 +17,9 @@ root.render(
 				<Route exact path="/home" element={<Home/>}/>
 				<Route exact path="/menu" element={<Menu/>}/>
 				<Route exact path="/menu/add" element={<MenuAdd/>}/>
+				<Route exact path="/orders" element={<Orders/>}/>
+				{/* TODO: Make 404 Page */}
+				<Route exact path="*" element={<Home/>}/>
 			</Routes>
 		</BrowserRouter>
 	</React.StrictMode>

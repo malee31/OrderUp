@@ -3,7 +3,7 @@ from order.models import ItemOrderTemplate
 
 
 class Cart(models.Model):
-    cart_id = models.CharField(max_length=100, null=False, blank=False, unique=True)
+    cart_id = models.CharField(max_length=100, null=False, blank=False, unique=True, primary_key=True)
     # Use Cart.items to access all CartItemOrder instances
 
 

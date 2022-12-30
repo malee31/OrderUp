@@ -34,13 +34,19 @@ def place_order(request, cart_id):
     # Creates a new order
     finalized_order = Order()
     finalized_order.save()
-    for itemEntry in Cart.objects.get(cart_id=cart_id).items:
+    cart_obj = Cart.objects.get(cart_id=cart_id)
+    for itemEntry in list(cart_obj.items.all()):
         print(f"Moving Item From Cart: [{itemEntry.item.name}]")
         order_item = ItemOrder(order=finalized_order, item=itemEntry.item, count=itemEntry.count)
         order_item.save()
 
-    # Convert all cart items into order items
-    print(f"Places [{cart_id}] as an Order")
+    # Converted all cart items into order items
+    print(f"Placed [{cart_id}] as an Order")
+    # Empty the cart. Cart itself is not deleted
+    # Note: No indication is sent to the front end to empty the cart
+    #       Remember to reload the cart or re-empty it there to match
+    cart_obj.items.all().delete()
+
     return HttpResponse(f"Cart Placed As Order [{finalized_order.order_number}]")
 
 

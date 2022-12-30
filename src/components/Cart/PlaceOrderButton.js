@@ -7,8 +7,23 @@ export default function PlaceOrderButton({ numCartItems }) {
 	const [loading, setLoading] = useState(false);
 
 	const placeOrder = () => {
-		console.log("Attempt To Place Order");
-		setLoading(!loading);
+		setLoading(true);
+		console.log("Attempting To Place An Order");
+		fetch(`/cart/place/${cart.cartId}`)
+			.then(res => {
+				console.log(res.status)
+				if(res.status === 200) {
+					console.log("Order Placed");
+					cart.updateCart({ items: [] });
+				} else {
+					console.warn(`Failed To Place Order [Status: ${res.status}]`);
+				}
+				setLoading(false);
+			})
+			.catch(err => {
+				console.warn("Unable To Place An Order:");
+				console.error(err);
+			});
 	};
 
 	return (

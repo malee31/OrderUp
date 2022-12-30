@@ -1,28 +1,27 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+from rest_framework.decorators import api_view
 from .models import Order
+from .serializers import OrderSerializer
 
 
-def create_order(request):
-    """Creates a new order and returns the assigned order number"""
-    new_order = Order()  # TODO: Manually assigning order numbers
-    new_order.save()
-    print(f"New order created [{new_order.order_number}]")
-    return HttpResponse(new_order.order_number)
+@api_view(["GET"])
+def list_order(request):
+    all_orders = Order.objects.all()
+    return JsonResponse({
+        "orders": OrderSerializer(all_orders, many=True).data
+    })
 
 
-def place_order(request, order_number):
-    """Finalizes and places a pre-existing unplaced order"""
-    print(f"Order placed [{order_number}]")
-    pass
-
-
-# Unused unless a staff section is created
+@api_view(["POST"])  # Unused unless a staff section is created
 def add_item(request, order_number, item_id):
     """Adds an item to the order. Changes the number of items if the item is already in the order"""
-    print(f"Item added to order [Order {order_number} ← Item {item_id}]")
+    print(f"Adding Item to Order [Order {order_number} ← Item {item_id}]")
+    order_obj = Order.objects.get(order_number=order_number)
     return HttpResponse("Order Added")
 
 
+@api_view(["POST"])  # TODO: Change to DELETE after checking CORS
 def delete_order(request, order_number):
-    print(f"Order deleted [{order_number}]")
+    print(f"Deleting Order [{order_number}]")
+    Order.objects.get(order_number=order_number).delete()
     return HttpResponse(f"Order Deleted {order_number}")

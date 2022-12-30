@@ -61,7 +61,7 @@ function MenuItemForm() {
 				/>
 			</label>
 			<button
-				className="block text-lg px-3 py-1.5 mt-2 border-2 bg-orange-200 hover:bg-orange-300 rounded shadow-md"
+				className="block text-lg px-3 py-1.5 mt-2 border-2 bg-orange-200 transition-colors hover:bg-orange-300 rounded shadow-md"
 				type="submit"
 			>
 				Add Item
