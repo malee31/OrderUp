@@ -5,7 +5,7 @@ export default function Orders() {
 	const [orders, setOrders] = useState([]);
 
 	useEffect(() => {
-		console.log("Loading Orders");
+		// console.log("Loading Orders");
 		fetch("/order/list")
 			.then(res => res.json())
 			.then(res => setOrders(res["orders"]))
