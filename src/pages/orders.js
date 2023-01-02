@@ -3,6 +3,11 @@ import OrderEntry from "../components/Order/OrderEntry";
 
 export default function Orders() {
 	const [orders, setOrders] = useState([]);
+	const syncOrder = newOrder => {
+		const newOrdersList = [...orders];
+		newOrdersList[newOrdersList.findIndex(order => order.order_number === newOrder.order_number)] = newOrder;
+		setOrders(newOrdersList);
+	};
 
 	useEffect(() => {
 		// console.log("Loading Orders");
@@ -25,7 +30,7 @@ export default function Orders() {
 			</h2>
 			<hr className="mt-2 mb-4"/>
 			{orders.map(order => (
-				<OrderEntry key={order.order_number} order={order}/>
+				<OrderEntry key={order.order_number} order={order} syncOrder={syncOrder}/>
 			))}
 		</main>
 	);

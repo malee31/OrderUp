@@ -1,3 +1,5 @@
+import json
+
 from django.http import HttpResponse, JsonResponse
 from rest_framework.decorators import api_view
 from .models import Order
@@ -10,6 +12,16 @@ def list_order(request):
     return JsonResponse({
         "orders": OrderSerializer(all_orders, many=True).data
     })
+
+
+@api_view(["POST"])
+def change_fulfill(request, order_number):
+    new_order_obj = json.loads(request.body)
+    new_order_fulfill = new_order_obj["fulfilled"]
+    order_obj = Order.objects.get(order_number=order_number)
+    order_obj.fulfilled = new_order_fulfill
+    order_obj.save()
+    return HttpResponse(f"Successfully Changed Fulfillment Status For Order {order_obj.order_number} to {new_order_fulfill}")
 
 
 @api_view(["POST"])  # Unused unless a staff section is created

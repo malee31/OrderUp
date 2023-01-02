@@ -1,9 +1,37 @@
 import CustomDropdown, { CustomOption } from "../CustomParts/CustomDropdown";
 import { useState } from "react";
 
-export default function OrderEntry({ order }) {
-	// TODO: Change fulfillment status
+export default function OrderEntry({ order, syncOrder }) {
 	const [synchingFulfill, setSynchingFulfill] = useState(false);
+	const changeFulfillmentStatus = newFulfillState => {
+		// console.log(`Fulfillment State Changing to [${newFulfillState}]`);
+		setSynchingFulfill(true);
+		const orderCopy = {
+			...order,
+			fulfilled: newFulfillState
+		};
+
+		fetch(`/order/fulfill/change/${order.order_number}`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify(orderCopy)
+		})
+			.then(res => {
+				if(res.status !== 200) {
+					console.warn(`[HTTP ${res.status}] Unable To Change Fulfillment Status For Order ${orderCopy.order_number} to ${orderCopy.fulfilled}`);
+					return;
+				}
+				syncOrder(orderCopy);
+				return res.text().then(console.log);
+			})
+			.catch(err => {
+				console.warn(`Unable To Change Fulfillment Status For Order ${orderCopy.order_number} to ${orderCopy.fulfilled}`);
+				console.error(err);
+			})
+			.finally(() => setSynchingFulfill(false));
+	};
 
 	return (
 		<div className={`before:absolute before:top-0 before:left-0 before:h-full before:w-2 before:rounded-l ${order.fulfilled ? "before:bg-green-400" : "before:bg-orange-300"} ${synchingFulfill ? "before:animate-pulse" : ""} w-full min-h-[108px] px-4 py-2 mb-2 bg-slate-50 rounded relative shadow hover:shadow-md transition-shadow`}>
@@ -12,9 +40,7 @@ export default function OrderEntry({ order }) {
 				<CustomDropdown
 					className="mx-2 px-1"
 					value={order.fulfilled}
-					onChange={val => {
-						console.log(`Dropdown set to [${val}]`);
-					}}
+					onChange={val => {changeFulfillmentStatus(val)}}
 				>
 					<CustomOption value={true}>Fulfilled</CustomOption>
 					<CustomOption value={false}>Ongoing</CustomOption>
