@@ -73,6 +73,12 @@ function generateOptionIdentity(optionProps) {
 	};
 }
 
+function optionIdentityMatch(identityA, identityB) {
+	if(identityA.value !== identityB.value) return false;
+	if(identityA.label !== identityB.label) return false;
+	return identityA.id === identityB.id;
+}
+
 /**
  * A drop-in replacement for <select>. Contains all the state stored in the dropdown
  * @param {Object} props
@@ -113,7 +119,7 @@ export default function CustomDropdown(props) {
 
 	return (
 		<DropdownContext.Provider value={actualDropdownValue}>
-			<CustomSelect value={dropdownValue} {...extraProps}>
+			<CustomSelect {...extraProps}>
 				{children}
 			</CustomSelect>
 		</DropdownContext.Provider>
@@ -130,6 +136,9 @@ export default function CustomDropdown(props) {
 function CustomSelect(props) {
 	const { className, children, onClick, onBlur, onChange = () => {}, ...extraProps } = props;
 	const [dropdownValue, setDropdownValue] = useDropdown();
+	const selectRef = useRef();
+	// Small negligible chance of collision
+	const ariaIdRef = useRef(`aria-id-${Date.now()}-${Math.random().toString(16).slice(2)}`);
 	// Using a ref to avoid infinite change re-fires from useEffect
 	const onChangeRef = useRef(onChange);
 	onChangeRef.current = onChange;
@@ -149,15 +158,30 @@ function CustomSelect(props) {
 				if(onClick) onClick(e);
 			}}
 			onBlur={e => {
-				setDropdownValue({ open: false });
+				if(!e.relatedTarget || !selectRef.current || !selectRef.current.contains(e.relatedTarget)) {
+					setDropdownValue({ open: false });
+				}
+
 				if(onBlur) onBlur(e);
 			}}
+			onKeyDown={e => {
+				if(e.key !== " " || e.target !== selectRef.current) return;
+				setDropdownValue({ open: true });
+			}}
+			role="combobox"
+			aria-expanded={dropdownValue.open}
+			aria-controls={ariaIdRef.current}
 			tabIndex={0}
+			ref={selectRef}
 			{...extraProps}
 		>
 			<span className="mr-[1em]">{dropdownValue.label}</span>
 			<span className="absolute right-0 inline-flex justify-center items-center w-[1em] h-full pr-0.5 align-middle"><ChevronDown/></span>
-			<div className={`min-w-full absolute top-full left-0 bg-[field] border border-slate-100 group ${dropdownValue.open ? "" : "hidden"}`}>
+			<div
+				className={`min-w-full absolute top-full left-0 bg-[field] border border-slate-100 group ${dropdownValue.open ? "" : "hidden"}`}
+				role="listbox"
+				id={ariaIdRef.current}
+			>
 				{children}
 			</div>
 		</div>
@@ -180,30 +204,38 @@ function CustomSelect(props) {
  * @constructor
  */
 export function CustomOption(props) {
-	const optionRef = useRef();
 	const [dropdownValue, setDropdownValue] = useDropdown();
 	const optionIdentity = generateOptionIdentity(props);
 
-	const identityArr = useMemo(() => {
-		return [optionIdentity.id, optionIdentity.label, optionIdentity.value]
-	}, [optionIdentity.id, optionIdentity.label, optionIdentity.value]);
+	// Reconstructing the optionIdentity object without a spread operator (A bit messy)
+	const memoOptionIdentity = useMemo(() => {
+		return {
+			id: optionIdentity.id,
+			value: optionIdentity.value,
+			label: optionIdentity.label,
+			selected: optionIdentity.selected,
+		};
+	}, [optionIdentity.id, optionIdentity.label, optionIdentity.value, optionIdentity.selected]);
 
 	// For identifying when the option's label or value changes
-	// Note: Some iffy code due to dependency arrays
-	const [identity, setIdentity] = useState(identityArr);
+	const [identity, setIdentity] = useState(memoOptionIdentity);
+	const selected = optionIdentityMatch(identity, dropdownValue.selectedIdentityRef.current);
 	useEffect(() => {
-		if(identityArr.every((part, index) => part === identity[index])) return;
+		// Only act if identity has changed
+		if(optionIdentityMatch(identity, memoOptionIdentity)) return;
 
 		// If Old value matches current dropdown value
-		if(dropdownValue.value === identity[2]) {
+		if(dropdownValue.value === identity.value) {
 			// console.log("Identity - Value Update");
 			setDropdownValue({
-				label: identityArr[1],
-				value: identityArr[2]
+				label: memoOptionIdentity.label,
+				value: memoOptionIdentity.value
 			});
 		}
-		setIdentity(identityArr);
-	}, [identity, identityArr, dropdownValue.value, setDropdownValue]);
+
+		// Update identity for future diffs
+		setIdentity(memoOptionIdentity);
+	}, [identity, memoOptionIdentity, dropdownValue.value, setDropdownValue]);
 
 	// Dispose used props from identity
 	const unusedProps = { ...props };
@@ -216,14 +248,21 @@ export function CustomOption(props) {
 
 		dropdownValue.changedRef.current = true;
 		dropdownValue.selectedIdentityRef.current = optionIdentity;
-		setDropdownValue({ value: optionIdentity.value, label: optionIdentity.label });
+		setDropdownValue({ value: optionIdentity.value, label: optionIdentity.label, open: false });
 	};
 
 	return (
 		<div
 			className={`block w-full px-2 py-0.5 border border-slate-100 bg-[field] cursor-pointer hover:bg-blue-600 hover:text-white ${className || ""}`}
 			onClick={setToOption}
-			ref={optionRef}
+			onKeyDown={e => {
+				if(e.key !== "Enter" && e.key !== " ") return;
+				setToOption();
+				e.target.blur();
+			}}
+			role="option"
+			aria-selected={selected}
+			tabIndex={0}
 			{...extraProps}
 		>
 			{children}
