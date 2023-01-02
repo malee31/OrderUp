@@ -19,7 +19,8 @@ import { ReactComponent as ChevronDown } from "../../images/ChevronDown.svg";
  * @property {*} label - Value to display as a label for Dropdown
  * @property {*} value - Value of the Dropdown
  * @property {boolean} open - Open state of the Dropdown
- * @property {boolean} contentRef.current Array of all options and their ids, values, and labels
+ * @property {Object[]} contentRef.current Array of all options and their ids, values, and labels
+ * @property {Object} selectedIdentityRef.current Identity entry from contentRef for the currently selected item
  * @property {boolean} changedRef.current Whether the dropdown value has been changed yet. Once it turns true, onChange will be allowed to fire and default value will stop updating
  */
 
@@ -31,6 +32,7 @@ const DropdownContext = createContext({
 		value: null,
 		open: false,
 		contentRef: { current: null },
+		selectedIdentityRef: { current: null },
 		changedRef: { current: null }
 	}
 });
@@ -44,10 +46,16 @@ function useDropdown() {
 	return [dropdownValue.val, dropdownValue.set];
 }
 
+function primitiveToString(inputVal) {
+	const inputType = typeof inputVal;
+	if(inputType === "string" || inputType === "number" || inputType === "boolean") return inputVal.toString();
+	return undefined;
+}
+
 function generateOptionLabel(optionProps) {
 	if(optionProps.label !== undefined) return optionProps.label;
-	if(typeof optionProps.children === "string") return optionProps.children;
-	if(optionProps.children?.every(child => typeof child === "string")) return optionProps.children.join("");
+	if(typeof primitiveToString(optionProps.children) === "string") return primitiveToString(optionProps.children);
+	if(optionProps.children?.every(child => typeof primitiveToString(child) === "string")) return optionProps.children.join("");
 	if(optionProps.value !== undefined) return optionProps.value.toString();
 
 	return "";
@@ -60,7 +68,8 @@ function generateOptionIdentity(optionProps) {
 	return {
 		id: optionProps.id,
 		label: optionLabel,
-		value: optionValue
+		value: optionValue,
+		selected: optionProps.selected
 	};
 }
 
@@ -75,29 +84,32 @@ export default function CustomDropdown(props) {
 	const { defaultValue, value, children, ...extraProps } = props;
 	const changedRef = useRef(false);
 	const contentRef = useRef([]);
-	// Check all contents
+	const selectedIdentityRef = useRef({});
+	// Generate all contents as an array of identities
 	contentRef.current = Children.map(children, child => generateOptionIdentity(child.props));
 
 	const actualValue = value ?? defaultValue ?? (contentRef.current.length ? contentRef.current[0].value : "");
-	const label = contentRef.current.find(optionIdentity => optionIdentity.value === actualValue).label;
+	selectedIdentityRef.current = contentRef.current.find(optionIdentity => optionIdentity.value === actualValue);
+	const label = selectedIdentityRef.current.label;
 	const [dropdownValue, setDropdownValue] = useState({
 		value: value,
 		label: label,
 		open: false,
 		contentRef: contentRef,
+		selectedIdentityRef: selectedIdentityRef,
 		changedRef: changedRef
 	});
 
+	/** @type {function} */
 	const actualSetDropdownValue = useCallback(newVal => {
 		setDropdownValue(oldVal => ({ ...oldVal, ...newVal }));
 	}, [setDropdownValue]);
 
-	/** @type {DropdownContextValueValue} */
+	/** @type {DropdownContextValue} */
 	const actualDropdownValue = useMemo(() => ({
 		set: actualSetDropdownValue,
 		val: dropdownValue
-	}), [setDropdownValue, dropdownValue]);
-
+	}), [actualSetDropdownValue, dropdownValue]);
 
 	return (
 		<DropdownContext.Provider value={actualDropdownValue}>
@@ -126,13 +138,12 @@ function CustomSelect(props) {
 	useEffect(() => {
 		if(!dropdownValue.changedRef.current) return;
 
-		console.log("FIRE ONCHANGE");
 		onChangeRef.current(dropdownValue.value);
 	}, [dropdownValue.value, dropdownValue.changedRef, onChangeRef]);
 
 	return (
 		<div
-			className={`inline-block h-min leading-[normal] align-middle bg-[field] border border-slate-100 cursor-pointer whitespace-nowrap relative mb-0.5 ${className || ""}`}
+			className={`inline-block h-min leading-[normal] align-middle bg-[field] border border-slate-100 cursor-pointer select-none whitespace-nowrap relative mb-0.5 ${className || ""}`}
 			onClick={e => {
 				setDropdownValue({ open: !dropdownValue.open });
 				if(onClick) onClick(e);
@@ -155,16 +166,44 @@ function CustomSelect(props) {
 
 /**
  * A drop-in replacement for <option> for <select> that can also be styled normally.
- * Implementation limitations (Deriving an identifier for the option):
- * - Props id, value, and label must be unique together (unless both options acting identically and highlighting when the other is clicked is acceptable)
- * - Label will be derived in the following order: label prop if exists, children prop if it is text, value prop to string if exists, blank string
- * - Value will be derived in the following order: value prop if exists, label prop in the order listed above
+ * Implementation limitations:
+ * - Multi-select is not supported
+ * - Opt-groups are not supported
+ * - Prop selected is not supported. Use the value prop on the dropdown instead
+ * - Dropdown reverting to first option when the option is selected but deleted is not supported
+ * - Deriving an identifier for the option
+ *   - Props id, value, and label must be unique together (unless both options acting identically and highlighting when the other is clicked is acceptable)
+ *   - Label will be derived in the following order: label prop if exists, children prop if it is text, value prop to string if exists, blank string
+ *   - Value will be derived in the following order: value prop if exists, label prop in the order listed above
  * @param {Object} props
  * @return {JSX.Element}
  * @constructor
  */
 export function CustomOption(props) {
+	const optionRef = useRef();
+	const [dropdownValue, setDropdownValue] = useDropdown();
 	const optionIdentity = generateOptionIdentity(props);
+
+	const identityArr = useMemo(() => {
+		return [optionIdentity.id, optionIdentity.label, optionIdentity.value]
+	}, [optionIdentity.id, optionIdentity.label, optionIdentity.value]);
+
+	// For identifying when the option's label or value changes
+	// Note: Some iffy code due to dependency arrays
+	const [identity, setIdentity] = useState(identityArr);
+	useEffect(() => {
+		if(identityArr.every((part, index) => part === identity[index])) return;
+
+		// If Old value matches current dropdown value
+		if(dropdownValue.value === identity[2]) {
+			// console.log("Identity - Value Update");
+			setDropdownValue({
+				label: identityArr[1],
+				value: identityArr[2]
+			});
+		}
+		setIdentity(identityArr);
+	}, [identity, identityArr, dropdownValue.value, setDropdownValue]);
 
 	// Dispose used props from identity
 	const unusedProps = { ...props };
@@ -172,18 +211,19 @@ export function CustomOption(props) {
 	delete unusedProps.value;
 
 	const { className, children, ...extraProps } = unusedProps;
-	const [dropdownValue, setDropdownValue] = useDropdown();
-	const setToOption = useCallback(() => {
+	const setToOption = () => {
 		if(dropdownValue.value === optionIdentity.value && dropdownValue.label === optionIdentity.label) return;
 
 		dropdownValue.changedRef.current = true;
+		dropdownValue.selectedIdentityRef.current = optionIdentity;
 		setDropdownValue({ value: optionIdentity.value, label: optionIdentity.label });
-	}, [dropdownValue.changedRef, dropdownValue.value, dropdownValue.label, optionIdentity.value, optionIdentity.label, setDropdownValue]);
+	};
 
 	return (
 		<div
 			className={`block w-full px-2 py-0.5 border border-slate-100 bg-[field] cursor-pointer hover:bg-blue-600 hover:text-white ${className || ""}`}
 			onClick={setToOption}
+			ref={optionRef}
 			{...extraProps}
 		>
 			{children}

@@ -1,5 +1,5 @@
 import CustomDropdown, { CustomOption } from "../CustomParts/CustomDropdown";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function OrderEntry({ order, syncOrder }) {
 	const [synchingFulfill, setSynchingFulfill] = useState(false);
