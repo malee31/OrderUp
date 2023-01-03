@@ -1,6 +1,6 @@
 export default function MenuAdd() {
 	return (
-		<main className="w-full h-full px-8 py-8 overflow-y-auto bg-gray-100 relative">
+		<main className="w-full h-full px-3 md:px-8 lg:px-20 xl:px-32 py-8 overflow-y-auto bg-gray-100 relative">
 			<h1 className="text-center text-3xl">
 				Add An Item To The Menu
 			</h1>
@@ -33,6 +33,7 @@ function MenuItemForm() {
 		})
 			.then(res => res.text())
 			.then(console.log)
+			.then(() => e.target.reset())
 			.catch(err => {
 				console.warn("Unable To Add New Menu Item:");
 				console.error(err);
@@ -41,7 +42,7 @@ function MenuItemForm() {
 
 	return (
 		<form
-			className="w-full max-w-[1000px] p-4 mx-auto my-4 rounded-md shadow-md bg-slate-50 border-transparent border-2 transition-[box-shadow,background-color] hover:shadow-lg hover:bg-white"
+			className="w-full max-w-[1000px] px-10 py-4 mx-auto my-4 rounded-md shadow-md bg-slate-50 border-transparent border-2 transition-[box-shadow,background-color] hover:shadow-lg hover:bg-white"
 			onSubmit={submit}
 		>
 			<h3 className="text-center text-xl">Add An Item</h3>
@@ -55,8 +56,8 @@ function MenuItemForm() {
 			</label>
 			<label className="block">
 				<span className="block text-lg">Item Description</span>
-				<input
-					className="w-[360px] max-w-full px-2 py-1 border-2 rounded-md"
+				<textarea
+					className="min-w-[360px] w-[50%] max-w-full h-32 px-2 py-1 border-2 rounded-md"
 					name="item-desc"
 				/>
 			</label>

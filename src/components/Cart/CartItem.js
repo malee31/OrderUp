@@ -1,9 +1,9 @@
 import { useCart } from "../data-structures/CartData";
 import { useEffect, useState } from "react";
+import CartItemDeleteConfirmation from "./CartItemDeleteConfirmation";
 import { ReactComponent as MinusIcon } from "../../images/Minus.svg";
 import { ReactComponent as PlusIcon } from "../../images/Plus.svg";
 import { ReactComponent as RemoveIcon } from "../../images/Remove.svg";
-import CartItemDeleteConfirmation from "./CartItemDeleteConfirmation";
 
 /**
  * A single entry in the Cart sidebar
