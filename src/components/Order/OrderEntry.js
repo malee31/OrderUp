@@ -19,27 +19,7 @@ import clickInsideOf from "../../utilities/clickInsideOf";
  */
 export default function OrderEntry({ order, syncOrder }) {
 	const [synchingFulfill, setSynchingFulfill] = useState(false);
-	const [showOptions, setShowOptions] = useState(false);
-	const verticalEllipsisRef = useRef();
-
-	// Close options when clicked outside
-	useEffect(() => {
-		if(!verticalEllipsisRef.current || !showOptions) return;
-
-		const listener = e => {
-			if(clickInsideOf(verticalEllipsisRef.current, e)) return;
-			// Exclude click events that have detached from dom like removing from cart
-			if(!e.target.isConnected) {
-				// console.log("Not hiding from external click due to detached node");
-				return;
-			}
-			// console.log("Hiding from external click")
-			setShowOptions(false);
-		};
-
-		document.addEventListener("click", listener);
-		return () => document.removeEventListener("click", listener);
-	}, [showOptions, setShowOptions]);
+	const [editMode, setEditMode] = useState(false);
 
 	const changeFulfillmentStatus = newFulfillState => {
 		// console.log(`Fulfillment State Changing to [${newFulfillState}]`);
@@ -71,6 +51,10 @@ export default function OrderEntry({ order, syncOrder }) {
 			.finally(() => setSynchingFulfill(false));
 	};
 
+	const deleteEntry = () => {
+		console.log("TODO: Implement Delete");
+	};
+
 	return (
 		<div className={`before:absolute before:top-0 before:left-0 before:h-full before:w-2 before:rounded-l ${order.fulfilled ? "before:bg-green-400" : "before:bg-orange-300"} ${synchingFulfill ? "before:animate-pulse" : ""} w-full min-h-[108px] p-2 mb-2 bg-slate-50 rounded relative shadow hover:shadow-md transition-shadow`}>
 			<div className="w-full border-b border-slate-200">
@@ -85,35 +69,120 @@ export default function OrderEntry({ order, syncOrder }) {
 						<CustomOption value={false}>Ongoing</CustomOption>
 					</CustomDropdown>
 				</h3>
-				<div
-					className="float-right w-7 h-full align-middle relative"
-					onBlur={e => {
-						if(e.relatedTarget && verticalEllipsisRef.current.contains(e.relatedTarget)) return;
-						setShowOptions(false);
-					}}
-					ref={verticalEllipsisRef}
-				>
-					<button
-						className="block w-7 h-full align-middle"
-						onClick={() => setShowOptions(!showOptions)}
+
+				<OrderEntryOptions className="float-right">
+					<OrderEntryOptionButton onClick={() => setEditMode(true)}>
+						Edit
+					</OrderEntryOptionButton>
+					{/* Double focus class for CSS precedence */}
+					<OrderEntryOptionButton
+						className="hover:bg-red-600 hover:text-white focus-visible:focus-visible:bg-red-600 focus-visible:text-white"
+						onClick={deleteEntry}
 					>
-						<VerticalEllipsis/>
-					</button>
-					<div className={`${showOptions ? "block" : "hidden"} absolute top-[calc(100%_+_4px)] right-0 min-w-[8rem] w-fit border-2 shadow border-slate-100 rounded-sm bg-slate-50`}>
-						<button className="text-left block w-full px-2 py-1 hover:bg-slate-100">Edit</button>
-						<button className="text-left block w-full px-2 py-1 hover:bg-red-600 hover:text-white">Delete</button>
-					</div>
-				</div>
+						Delete
+					</OrderEntryOptionButton>
+				</OrderEntryOptions>
 			</div>
 
-			<ul className="w-fill px-4 py-2">
-				{!order.items.length && <p>No Items</p>}
-				{order.items.map(itemOrder => (
+			<OrderEntryList order={order} edit={editMode}/>
+		</div>
+	);
+}
+
+function OrderEntryOptions(props) {
+	const { className = "", onClick, onBlur, children, ...extraProps } = props;
+	const [showOptions, setShowOptions] = useState(false);
+	/** @type {React.RefObject<HTMLDivElement>} */
+	const optionRef = useRef();
+
+	// Close options when clicked outside
+	useEffect(() => {
+		if(!optionRef.current || !showOptions) return;
+
+		const listener = e => {
+			if(clickInsideOf(optionRef.current, e)) return;
+			// Exclude click events that have detached from dom like removing from cart
+			if(!e.target.isConnected) {
+				// console.log("Not hiding from external click due to detached node");
+				return;
+			}
+			// console.log("Hiding from external click")
+			setShowOptions(false);
+		};
+
+		document.addEventListener("click", listener);
+		return () => document.removeEventListener("click", listener);
+	}, [showOptions, setShowOptions]);
+
+	return (
+		<div
+			className={`w-7 h-full align-middle relative ${className}`}
+			onBlur={e => {
+				if(e.relatedTarget && optionRef.current.contains(e.relatedTarget)) return;
+				setShowOptions(false);
+				if(onBlur) onBlur();
+			}}
+			onClick={e => {
+				if(e.target.dataset["closeOptionsOnClick"] === "true") {
+					setShowOptions(false);
+				}
+				if(onClick) onClick(e);
+			}}
+			ref={optionRef}
+			{...extraProps}
+		>
+			<button
+				className="block w-7 h-full align-middle"
+				onClick={() => setShowOptions(!showOptions)}
+			>
+				<VerticalEllipsis/>
+			</button>
+			<div className={`${showOptions ? "block" : "hidden"} absolute top-[calc(100%_+_4px)] right-0 min-w-[8rem] w-fit border-2 shadow border-slate-100 rounded-sm bg-slate-50`}>
+				{children}
+			</div>
+		</div>
+
+	)
+}
+
+function OrderEntryOptionButton(props) {
+	const { closeOptionsOnClick = true, className = "", children, ...extraProps } = props;
+
+	return (
+		<button
+			className={`text-left block w-full px-2 py-1 hover:bg-slate-100 focus-visible:bg-slate-100 ${className}`}
+			data-close-options-on-click={closeOptionsOnClick}
+			{...extraProps}
+		>
+			{children}
+		</button>
+	);
+}
+
+function OrderEntryList(props) {
+	const { order, edit, ...extraProps } = props;
+	const items = order.items;
+
+	return (
+		<>
+			<ul className="w-fill px-4 py-2" {...extraProps}>
+				{!items.length && <p>No Items</p>}
+				{items.map(itemOrder => (
 					<li key={itemOrder.item.item_id}>
-						{itemOrder.count} | {itemOrder.item.name}
+						{edit ? "Editing -" : ""} {itemOrder.count} | {itemOrder.item.name}
 					</li>
 				))}
 			</ul>
-		</div>
+			{edit && (
+				<div className="flex flex-row gap-2 px-4 mb-1">
+					<button className="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded hover:bg-slate-100 focus-visible:bg-slate-100">
+						Save Edits
+					</button>
+					<button className="px-3 py-1.5 hover:bg-red-600 hover:text-white focus-visible:bg-red-600 focus-visible:text-white border border-slate-200 rounded">
+						Discard Edits
+					</button>
+				</div>
+			)}
+		</>
 	);
 }
