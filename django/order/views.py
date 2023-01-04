@@ -36,4 +36,4 @@ def add_item(request, order_number, item_id):
 def delete_order(request, order_number):
     print(f"Deleting Order [{order_number}]")
     Order.objects.get(order_number=order_number).delete()
-    return HttpResponse(f"Order Deleted {order_number}")
+    return HttpResponse(f"Order #{order_number} Deleted")

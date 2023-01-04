@@ -13,7 +13,7 @@ import clickInsideOf from "../../utilities/clickInsideOf";
 /**
  * Displays a single order entry for a list of orders and allows and handles edits to the item internally
  * @param {Order} order - Order to display in the entry
- * @param {function} syncOrder - Function that takes in an updated Order object and resynchronizes it with the list's state. Does not update on the server (that will be done here)
+ * @param {function} syncOrder - Function that takes in an updated Order object and resynchronizes it with the list's state. If given a falsy value followed by an order number, the order will be deleted instead. Does not update on the server (that will be done here)
  * @return {JSX.Element}
  * @constructor
  */
@@ -53,6 +53,17 @@ export default function OrderEntry({ order, syncOrder }) {
 
 	const deleteEntry = () => {
 		console.log("TODO: Implement Delete");
+		fetch(`/order/delete/${order.order_number}`, {
+			method: "POST"
+		}).then(res => {
+			if(res.status !== 200) {
+				console.warn(`Unable To Delete Order #${order.order_number}`);
+				console.log(res);
+				return;
+			}
+			res.text().then(console.warn);
+			syncOrder(null, order.order_number);
+		});
 	};
 
 	return (
@@ -61,7 +72,7 @@ export default function OrderEntry({ order, syncOrder }) {
 				<h3 className="inline px-2 text-lg">
 					<span className="inline-block min-w-[80px] max-w-full">Order #{order.order_number}</span>
 					<CustomDropdown
-						className="mx-2 px-1"
+						className="mx-2 px-1 z-10"
 						value={order.fulfilled}
 						onChange={val => {changeFulfillmentStatus(val)}}
 					>
@@ -84,7 +95,7 @@ export default function OrderEntry({ order, syncOrder }) {
 				</OrderEntryOptions>
 			</div>
 
-			<OrderEntryList order={order} edit={editMode}/>
+			<OrderEntryList order={order} edit={editMode} setEdit={setEditMode}/>
 		</div>
 	);
 }
@@ -116,7 +127,7 @@ function OrderEntryOptions(props) {
 
 	return (
 		<div
-			className={`w-7 h-full align-middle relative ${className}`}
+			className={`w-7 h-full align-middle relative rounded ${className}`}
 			onBlur={e => {
 				if(e.relatedTarget && optionRef.current.contains(e.relatedTarget)) return;
 				setShowOptions(false);
@@ -150,7 +161,7 @@ function OrderEntryOptionButton(props) {
 
 	return (
 		<button
-			className={`text-left block w-full px-2 py-1 hover:bg-slate-100 focus-visible:bg-slate-100 ${className}`}
+			className={`text-left block w-full px-2 py-1 first:rounded-t-sm last:rounded-b-sm hover:bg-slate-100 focus-visible:bg-slate-100 ${className}`}
 			data-close-options-on-click={closeOptionsOnClick}
 			{...extraProps}
 		>
@@ -160,8 +171,35 @@ function OrderEntryOptionButton(props) {
 }
 
 function OrderEntryList(props) {
-	const { order, edit, ...extraProps } = props;
-	const items = order.items;
+	const { order, edit, setEdit, ...extraProps } = props;
+	const orderCopy = { ...order, items: [...order.items] };
+	const [editItem, setEditItem] = useState(orderCopy);
+
+	// Resync the editable version each time the order changes or edit mode is exited.
+	// Does nothing in edit mode unless order number changes which would be alarming
+	// Important: Assumes that the order number doesn't change, especially while in edit mode otherwise spazzing will happen
+	if(orderCopy.order_number !== editItem.order_number) {
+		console.warn(`Warning: This shouldn't happen. List for Order #${editItem.order_number} has changed to #${orderCopy.order_number}`);
+		console.warn(`^ Info: Edit mode is ${edit ? "ON so this is impactful" : "OFF so this is invisible"} ^`);
+		setEditItem(orderCopy);
+	} else if(!edit && !editItem.items.every((editOrderItem, index) => {
+		const matchingOrderItem = orderCopy.items[index];
+		return matchingOrderItem.count === editOrderItem.count && matchingOrderItem.item.item_id === editOrderItem.item.item_id;
+	})) {
+		// Check if every item matches. If not everything matches, do nothing unless in edit mode
+		// Resync edit item due to changes in the order object in non-edit mode
+		// Note: Order swaps still count as a change in the order. This is correct behavior
+		console.log(`Resync Editable Order for ${orderCopy.order_number}`)
+		setEditItem(orderCopy);
+	}
+
+	const onDiscard = () => {
+		console.warn(`Discarding Edits For Order #${order.order_number}`);
+		setEdit(false);
+	};
+
+	const displayedOrder = edit ? editItem : order;
+	const items = displayedOrder.items;
 
 	return (
 		<>
@@ -178,7 +216,10 @@ function OrderEntryList(props) {
 					<button className="px-3 py-1.5 bg-slate-50 border-2 text-green-600 border-green-600 rounded hover:bg-green-500 focus-visible:bg-green-500 hover:text-white focus-visible:text-white">
 						Save Edits
 					</button>
-					<button className="px-3 py-1.5 bg-slate-50 border-2 border-red-600 text-red-600 rounded hover:bg-red-600 hover:text-white focus-visible:bg-red-600 focus-visible:text-white">
+					<button
+						className="px-3 py-1.5 bg-slate-50 border-2 border-red-600 text-red-600 rounded hover:bg-red-600 hover:text-white focus-visible:bg-red-600 focus-visible:text-white"
+						onClick={onDiscard}
+					>
 						Discard Edits
 					</button>
 				</div>

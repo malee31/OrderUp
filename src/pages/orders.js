@@ -3,9 +3,15 @@ import OrderEntry from "../components/Order/OrderEntry";
 
 export default function Orders() {
 	const [orders, setOrders] = useState([]);
-	const syncOrder = newOrder => {
+	const syncOrder = (newOrder, optionalOrderNumber) => {
+		const order_number = optionalOrderNumber ?? newOrder.order_number;
 		const newOrdersList = [...orders];
-		newOrdersList[newOrdersList.findIndex(order => order.order_number === newOrder.order_number)] = newOrder;
+		const orderIndex = newOrdersList.findIndex(order => order.order_number === order_number);
+		if(!newOrder) {
+			newOrdersList.splice(orderIndex, 1);
+		} else {
+			newOrdersList[orderIndex] = newOrder;
+		}
 		setOrders(newOrdersList);
 	};
 
