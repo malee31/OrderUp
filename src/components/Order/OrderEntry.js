@@ -175,10 +175,10 @@ function OrderEntryList(props) {
 			</ul>
 			{edit && (
 				<div className="flex flex-row gap-2 px-4 mb-1">
-					<button className="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded hover:bg-slate-100 focus-visible:bg-slate-100">
+					<button className="px-3 py-1.5 bg-slate-50 border-2 text-green-600 border-green-600 rounded hover:bg-green-500 focus-visible:bg-green-500 hover:text-white focus-visible:text-white">
 						Save Edits
 					</button>
-					<button className="px-3 py-1.5 hover:bg-red-600 hover:text-white focus-visible:bg-red-600 focus-visible:text-white border border-slate-200 rounded">
+					<button className="px-3 py-1.5 bg-slate-50 border-2 border-red-600 text-red-600 rounded hover:bg-red-600 hover:text-white focus-visible:bg-red-600 focus-visible:text-white">
 						Discard Edits
 					</button>
 				</div>
