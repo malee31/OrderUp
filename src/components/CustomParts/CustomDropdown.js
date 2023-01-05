@@ -134,7 +134,7 @@ export default function CustomDropdown(props) {
  * @internal
  */
 function CustomSelect(props) {
-	const { className, children, onClick, onBlur, onChange = () => {}, ...extraProps } = props;
+	const { className, children, onClick, onBlur, heightLimit, onChange = () => {}, ...extraProps } = props;
 	const [dropdownValue, setDropdownValue] = useDropdown();
 	const selectRef = useRef();
 	// Small negligible chance of collision
@@ -175,10 +175,13 @@ function CustomSelect(props) {
 			ref={selectRef}
 			{...extraProps}
 		>
-			<span className="mr-[1em]">{dropdownValue.label}</span>
-			<span className="absolute right-0 inline-flex justify-center items-center w-[1em] h-full pr-0.5 align-middle"><ChevronDown/></span>
+			<div className="sticky top-0">
+				<span className="mr-[1em]">{dropdownValue.label}</span>
+				<span className="absolute top-0 right-0 inline-flex justify-center items-center w-[1em] h-full pr-0.5 align-middle"><ChevronDown/></span>
+			</div>
 			<div
-				className={`min-w-full absolute top-full left-0 bg-[field] border border-slate-100 group ${dropdownValue.open ? "" : "hidden"}`}
+				className={`min-w-full absolute top-full left-0 bg-[field] border border-slate-100 group overflow-y-auto z-[999] ${dropdownValue.open ? "" : "hidden"}`}
+				style={heightLimit !== undefined ? { maxHeight: heightLimit } : {}}
 				role="listbox"
 				id={ariaIdRef.current}
 			>

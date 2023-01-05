@@ -206,9 +206,25 @@ function OrderEntryList(props) {
 			<ul className="w-fill px-4 py-2" {...extraProps}>
 				{!items.length && <p>No Items</p>}
 				{items.map(itemOrder => (
-					<li key={itemOrder.item.item_id}>
-						{edit ? "Editing -" : ""} {itemOrder.count} | {itemOrder.item.name}
-					</li>
+					edit ? (
+						<li className="my-0.5" key={itemOrder.item.item_id}>
+							<input
+								className="inline-block w-0 min-w-[3em] mr-1.5 text-center border input-number-no-spin"
+								aria-label={`${itemOrder.item.name} Quantity`}
+								value={itemOrder.count}
+								type="number"
+							/>
+							<CustomDropdown className="px-1 py-1 min-w-[15rem]" heightLimit="11rem" value={itemOrder.item.item_id}>
+								<CustomOption value={itemOrder.item.item_id}>{itemOrder.item.name}</CustomOption>
+							</CustomDropdown>
+						</li>
+					) : (
+						<li className="mt-1 mb-2 py-0.5" key={itemOrder.item.item_id}>
+							<span className="align-top inline-block min-w-[3em] text-center border mr-0.5">{itemOrder.count}</span>
+							<span> </span>
+							<span className="inline-block px-1 border-b">{itemOrder.item.name}</span>
+						</li>
+					)
 				))}
 			</ul>
 			{edit && (
