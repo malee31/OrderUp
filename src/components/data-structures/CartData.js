@@ -1,15 +1,8 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 
 /**
- * @typedef {Object} Item - An item on the menu
- * @property {string} item_id - ID of the item in the database
- * @property {string} name - Name of the item (Will be displayed)
- * @property {string} description - Description of the item (Will be displayed)
- */
-
-/**
  * @typedef {Object} CartItem - An item in the cart
- * @property {Item} item - The item in the cart
+ * @property {MenuItem} item - The item in the cart
  * @property {number} count - Number of the item in the cart
  */
 

@@ -7,7 +7,7 @@ import { ReactComponent as RemoveIcon } from "../../images/Remove.svg";
 
 /**
  * A single entry in the Cart sidebar
- * @param {Item} item - The item in the Cart
+ * @param {MenuItem} item - The item in the Cart
  * @param {number} count - The number of the specified item in the Cart
  * @return {JSX.Element}
  * @constructor

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import OrderEntry from "../components/Order/OrderEntry";
+import MenuProvider from "../components/data-structures/MenuData";
 
 export default function Orders() {
 	const [orders, setOrders] = useState([]);
@@ -27,17 +28,19 @@ export default function Orders() {
 	}, []);
 
 	return (
-		<main className="w-full h-full px-3 md:px-8 lg:px-20 xl:px-32 py-8 bg-gray-100 relative overflow-y-auto">
-			<h1 className="text-center text-3xl">
-				Current Orders
-			</h1>
-			<h2 className="text-center text-lg text-gray-500">
-				A list of all currently placed orders
-			</h2>
-			<hr className="mt-2 mb-4"/>
-			{orders.map(order => (
-				<OrderEntry key={order.order_number} order={order} syncOrder={syncOrder}/>
-			))}
-		</main>
+		<MenuProvider>
+			<main className="w-full h-full px-3 md:px-8 lg:px-20 xl:px-32 py-8 bg-gray-100 relative overflow-y-auto">
+				<h1 className="text-center text-3xl">
+					Current Orders
+				</h1>
+				<h2 className="text-center text-lg text-gray-500">
+					A list of all currently placed orders
+				</h2>
+				<hr className="mt-2 mb-4"/>
+				{orders.map(order => (
+					<OrderEntry key={order.order_number} order={order} syncOrder={syncOrder}/>
+				))}
+			</main>
+		</MenuProvider>
 	);
 }

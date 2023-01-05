@@ -4,10 +4,16 @@ import { ReactComponent as VerticalEllipsis } from "../../images/VerticalEllipsi
 import clickInsideOf from "../../utilities/clickInsideOf";
 
 /**
+ * @typedef {Object} OrderItem - An item in the order
+ * @property {MenuItem} item - The item in the order
+ * @property {number} count - Number of the item in the order
+ */
+
+/**
  * @typedef {Object} Order - An order that has been placed
  * @property {number} order_number - A unique number for the order
  * @property {boolean} fulfilled - Whether the order has been fulfilled yet
- * @property {Item[]} items - All items in the order
+ * @property {OrderItem[]} items - All items in the order
  */
 
 /**

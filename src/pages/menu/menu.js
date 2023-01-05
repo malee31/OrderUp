@@ -1,46 +1,25 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import CartProvider from "../../components/data-structures/CartData";
 import CartSidebar from "../../components/Cart/CartSidebar";
 import MenuItem from "../../components/Menu/MenuItem";
 import MenuItemShimmer from "../../components/Menu/MenuItemShimmer";
+import MenuProvider, { useMenu } from "../../components/data-structures/MenuData";
 
 export default function Menu() {
 	return (
 		<CartProvider>
-			<MenuView/>
+			<MenuProvider>
+				<MenuView/>
+			</MenuProvider>
 		</CartProvider>
 	);
 }
 
-/**
- * Loads menu items to display from the server
- * TODO: Should load items from the database in the future (Optional: Retry when fail)
- * @async
- * @return {Item[]}
- */
-async function loadItems() {
-	return fetch("/menu/list")
-		.then(res => res.json())
-		.then(result => result.items);
-}
-
 function MenuView() {
-	const [menuItems, setMenuItems] = useState([]);
-	const [loading, setLoading] = useState(true);
 	const [showCart, setShowCart] = useState(false);
-	useEffect(() => {
-		loadItems()
-			.then(items => {
-				setMenuItems(items);
-			})
-			.catch(err => {
-				console.warn("Failed to Load Menu Items");
-				console.error(err);
-			})
-			.finally(() => {
-				setLoading(false);
-			});
-	}, []);
+	const menu = useMenu();
+	const menuItems = menu.menuItems;
+	const loading = !menu.loaded;
 
 	return (
 		<main className={`w-full h-full px-3 md:px-8 lg:px-20 xl:px-32 py-8 bg-gray-100 relative ${loading ? "overflow-y-hidden" : "overflow-y-auto"}`}>
