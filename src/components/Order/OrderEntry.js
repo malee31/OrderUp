@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import CustomDropdown, { CustomOption } from "../CustomParts/CustomDropdown";
 import { ReactComponent as VerticalEllipsis } from "../../images/VerticalEllipsis.svg";
 import clickInsideOf from "../../utilities/clickInsideOf";
+import { useMenu } from "../data-structures/MenuData";
 
 /**
  * @typedef {Object} OrderItem - An item in the order
@@ -58,7 +59,6 @@ export default function OrderEntry({ order, syncOrder }) {
 	};
 
 	const deleteEntry = () => {
-		console.log("TODO: Implement Delete");
 		fetch(`/order/delete/${order.order_number}`, {
 			method: "POST"
 		}).then(res => {
@@ -101,7 +101,7 @@ export default function OrderEntry({ order, syncOrder }) {
 				</OrderEntryOptions>
 			</div>
 
-			<OrderEntryList order={order} edit={editMode} setEdit={setEditMode}/>
+			<OrderEntryList order={order} syncOrder={syncOrder} edit={editMode} setEdit={setEditMode}/>
 		</div>
 	);
 }
@@ -177,9 +177,10 @@ function OrderEntryOptionButton(props) {
 }
 
 function OrderEntryList(props) {
-	const { order, edit, setEdit, ...extraProps } = props;
+	const { order, syncOrder, edit, setEdit, ...extraProps } = props;
 	const orderCopy = { ...order, items: [...order.items] };
 	const [editItem, setEditItem] = useState(orderCopy);
+	const menu = useMenu();
 
 	// Resync the editable version each time the order changes or edit mode is exited.
 	// Does nothing in edit mode unless order number changes which would be alarming
@@ -199,9 +200,33 @@ function OrderEntryList(props) {
 		setEditItem(orderCopy);
 	}
 
+	const onSave = () => {
+		console.log("Save Order Edits:", editItem);
+		syncOrder(editItem);
+		setEdit(false);
+	}
+
 	const onDiscard = () => {
 		console.warn(`Discarding Edits For Order #${order.order_number}`);
 		setEdit(false);
+	};
+
+	const changeEditItem = (item_id, newEditOrderItem) => {
+		const foundItemIndex = editItem.items.findIndex(editOrderItem => editOrderItem.item.item_id === item_id);
+		const editOrderItemsClone = [...editItem.items];
+		// console.log("From:", { ...editItem, items: [...editItem.items] })
+		if(foundItemIndex === -1) {
+			// Add the item
+			editOrderItemsClone.push(newEditOrderItem);
+		} else {
+			editOrderItemsClone.splice(foundItemIndex, 1, newEditOrderItem);
+			if(!newEditOrderItem || newEditOrderItem.count === 0) {
+				// Delete if count is 0 or editItem is null
+				editOrderItemsClone.splice(foundItemIndex, 1);
+			}
+		}
+		// console.log("To:", { ...editItem, items: editOrderItemsClone })
+		setEditItem({ ...editItem, items: editOrderItemsClone });
 	};
 
 	const displayedOrder = edit ? editItem : order;
@@ -217,12 +242,48 @@ function OrderEntryList(props) {
 							<input
 								className="inline-block w-0 min-w-[3em] mr-1.5 text-center border input-number-no-spin"
 								aria-label={`${itemOrder.item.name} Quantity`}
-								value={itemOrder.count}
 								type="number"
+								value={itemOrder.count}
+								onChange={e => {
+									changeEditItem(itemOrder.item.item_id, {
+										...itemOrder,
+										count: Math.max(0, Number(e.target.value))
+									});
+								}}
 							/>
-							<CustomDropdown className="px-1 py-1 min-w-[15rem]" heightLimit="11rem" value={itemOrder.item.item_id}>
-								<CustomOption value={itemOrder.item.item_id}>{itemOrder.item.name}</CustomOption>
+							<CustomDropdown
+								className="px-1 py-1 min-w-[13.5rem] md:min-w-[15rem]"
+								heightLimit="11rem"
+								value={itemOrder.item.item_id}
+								onChange={newValue => {
+									// console.log(`Change Item ${itemOrder.item.item_id} To:`, { ...itemOrder, item: { ...menu.menuItems.find(menuItem => menuItem.item_id === newValue) } })
+									changeEditItem(itemOrder.item.item_id, {
+										...itemOrder,
+										item: { ...menu.menuItems.find(menuItem => menuItem.item_id === newValue) }
+									});
+								}}
+							>
+								{menu.loaded ? (
+									menu.menuItems.map(menuItem => (
+										<CustomOption
+											key={menuItem.item_id}
+											value={menuItem.item_id}
+											disabled={itemOrder.item.item_id !== menuItem.item_id && Boolean(editItem.items.find(editOrderItem => editOrderItem.item.item_id === menuItem.item_id))}
+										>
+											{menuItem.name}
+										</CustomOption>
+									))
+								) : (
+									<CustomOption value={itemOrder.item.item_id} disabled={true}>{itemOrder.item.name}</CustomOption>
+								)}
 							</CustomDropdown>
+							<OrderEntryOptions className="inline-block">
+								<OrderEntryOptionButton
+									onClick={() => changeEditItem(itemOrder.item.item_id, null)}
+								>
+									Delete
+								</OrderEntryOptionButton>
+							</OrderEntryOptions>
 						</li>
 					) : (
 						<li className="mt-1 mb-2 py-0.5" key={itemOrder.item.item_id}>
@@ -235,7 +296,10 @@ function OrderEntryList(props) {
 			</ul>
 			{edit && (
 				<div className="flex flex-row gap-2 px-4 mb-1">
-					<button className="px-3 py-1.5 bg-slate-50 border-2 text-green-600 border-green-600 rounded hover:bg-green-500 focus-visible:bg-green-500 hover:text-white focus-visible:text-white">
+					<button
+						className="px-3 py-1.5 bg-slate-50 border-2 text-green-600 border-green-600 rounded hover:bg-green-500 focus-visible:bg-green-500 hover:text-white focus-visible:text-white"
+						onClick={onSave}
+					>
 						Save Edits
 					</button>
 					<button

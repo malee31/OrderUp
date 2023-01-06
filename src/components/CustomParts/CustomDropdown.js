@@ -245,7 +245,7 @@ export function CustomOption(props) {
 	delete unusedProps.label;
 	delete unusedProps.value;
 
-	const { className, children, ...extraProps } = unusedProps;
+	const { className, children, disabled = false, ...extraProps } = unusedProps;
 	const setToOption = () => {
 		if(dropdownValue.value === optionIdentity.value && dropdownValue.label === optionIdentity.label) return;
 
@@ -256,9 +256,10 @@ export function CustomOption(props) {
 
 	return (
 		<div
-			className={`block w-full px-2 py-0.5 border border-slate-100 bg-[field] cursor-pointer hover:bg-blue-600 hover:text-white ${className || ""}`}
-			onClick={setToOption}
+			className={`block w-full px-2 py-0.5 border border-slate-100 bg-[field] cursor-pointer hover:bg-blue-600 hover:text-white ${disabled ? "[&]:bg-slate-50 text-slate-300 hover:bg-slate-50 hover:text-slate-300 cursor-default" : ""} ${className || ""}`}
+			onClick={!disabled ? setToOption : null}
 			onKeyDown={e => {
+				if(disabled) return;
 				if(e.key !== "Enter" && e.key !== " ") return;
 				setToOption();
 				e.target.blur();
