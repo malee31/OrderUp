@@ -92,7 +92,7 @@ export default function CustomDropdown(props) {
 	const contentRef = useRef([]);
 	const selectedIdentityRef = useRef({});
 	// Generate all contents as an array of identities
-	contentRef.current = Children.map(children, child => generateOptionIdentity(child.props));
+	contentRef.current = Children.map(Children.toArray(children), child => generateOptionIdentity(child.props));
 
 	const actualValue = value ?? defaultValue ?? (contentRef.current.length ? contentRef.current[0].value : "");
 	selectedIdentityRef.current = contentRef.current.find(optionIdentity => optionIdentity.value === actualValue);
@@ -116,6 +116,13 @@ export default function CustomDropdown(props) {
 		set: actualSetDropdownValue,
 		val: dropdownValue
 	}), [actualSetDropdownValue, dropdownValue]);
+
+	useEffect(() => {
+		actualSetDropdownValue({
+			value: actualValue,
+			label: contentRef.current.find(optionIdentity => optionIdentity.value === actualValue)?.label
+		});
+	}, [actualValue, actualSetDropdownValue]);
 
 	return (
 		<DropdownContext.Provider value={actualDropdownValue}>

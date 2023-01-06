@@ -53,6 +53,7 @@ def place_order(request, cart_id):
 @api_view(["POST"])
 def sync_cart(request):
     """Syncs the Cart and all the cart related items. Assumes Cart exists for now"""
+    # Note: Similar to order/views.py
     cart_obj = json.loads(request.body)
     cart_id = cart_obj["cart_id"]
     cart_items = cart_obj["items"]
@@ -64,8 +65,6 @@ def sync_cart(request):
 
     item_orders = CartItemOrder.objects.filter(cart=cart)
     print("Items located for sync")
-    # TODO: Handle item deletes (Not yet implemented on front end)
-    # TODO: Test. Cannot test until menu items have been made
     for cart_item in cart_items:
         cart_item_item = cart_item["item"]
         item_id = cart_item_item["item_id"]
