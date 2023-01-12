@@ -1,0 +1,26 @@
+[
+{
+    "model": "menu.menuitem",
+    "pk": 1,
+    "fields": {
+        "name": "Buttercream Cake",
+        "description": "A Delicious and Tasty Cake. Made fresh each morning by our skilled chefs"
+    }
+},
+{
+    "model": "menu.menuitem",
+    "pk": 3,
+    "fields": {
+        "name": "Double Chocolate Cake",
+        "description": "A Decadent, Chocolatey Dessert. Made with three layers of semi-sweet chocolate icing, dipped in melted chocolate, and chilled, it is the perfect way to end off your meal"
+    }
+},
+{
+    "model": "menu.menuitem",
+    "pk": 4,
+    "fields": {
+        "name": "Oreo Milkshake",
+        "description": "A sweet, thick milkshake made with vanilla ice cream, milk, and crushed Oreo cookies. Topped with whipped cream and a bright red maraschino cherry!"
+    }
+}
+]
