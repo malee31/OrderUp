@@ -1,0 +1,22 @@
+databases:
+  - name: OrderUp Database
+    databaseName: orderup_db
+    user: orderup_admin
+
+services:
+  - type: web
+    name: OrderUp
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn OrderUp.wsgi:application"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: OrderUp Database
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: WEB_CONCURRENCY
+        value: 4
+      - key: DEBUG
+        value: True
