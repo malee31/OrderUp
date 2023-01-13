@@ -2,13 +2,14 @@ databases:
   - name: OrderUp Database
     databaseName: orderup_db
     user: orderup_admin
+    postgresMajorVersion: 15
 
 services:
   - type: web
     name: OrderUp
     env: python
     buildCommand: "./build.sh"
-    startCommand: "gunicorn OrderUp.wsgi:application"
+    startCommand: "cd django && gunicorn OrderUp.wsgi:application"
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -18,5 +19,3 @@ services:
         generateValue: true
       - key: WEB_CONCURRENCY
         value: 4
-      - key: DEBUG
-        value: True

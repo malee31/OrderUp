@@ -20,9 +20,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(getenv("DEBUG"))
+DEBUG = bool(getenv("DEBUG", default=False))
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = getenv("ALLOWED_HOSTS", default="").split(",")
 
 # Application definition
 INSTALLED_APPS = [
