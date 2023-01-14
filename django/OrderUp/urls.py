@@ -13,8 +13,11 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
 from django.contrib import admin
-from django.urls import path, include
+from django.shortcuts import render
+from django.urls import path, re_path, include
+from django.views.static import serve
 
 urlpatterns = [
     path('admin/', admin.site.urls),  # Default admin urls
@@ -24,4 +27,9 @@ urlpatterns = [
     path('menu/', include('menu.urls')),  # All things menu related
     path('cart/', include('cart.urls')),  # All things cart related
     path('order/', include('order.urls')),  # All things order related
+    re_path(r'^react/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
 ]
+
+
+def handler404(request, *args, **kwargs):
+    return render(request, "index.html")

@@ -2,6 +2,7 @@
 https://docs.djangoproject.com/en/4.1/topics/settings/
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
+import os.path
 from os import getenv
 from pathlib import Path
 
@@ -20,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(getenv("DEBUG", default=False))
+DEBUG = getenv("DEBUG", default="False") == "True"
 
 ALLOWED_HOSTS = getenv("ALLOWED_HOSTS", default="").split(",")
 
@@ -29,6 +30,7 @@ INSTALLED_APPS = [
     'menu',
     'cart',
     'order',
+    'build',
     'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -55,7 +57,7 @@ ROOT_URLCONF = 'OrderUp.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, "build")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -103,9 +105,12 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.1/howto/static-files/
-STATIC_URL = 'static/'
+# Static files (For this project, it is all the React build files
+STATIC_URL = '/react/'
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "build")
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

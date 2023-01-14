@@ -5,12 +5,13 @@ private/
 # Django ignores
 venv/
 db.sqlite3
+staticfiles/
 __pycache__/
 
 
 # React .gitignore
 # dependencies
-/node_modules
+node_modules/
 /.pnp
 .pnp.js
 
@@ -18,7 +19,8 @@ __pycache__/
 /coverage
 
 # production
-/build
+django
+!build/.gitkeep
 
 # misc
 .DS_Store
