@@ -6,7 +6,8 @@ pip install -r requirements.txt
 
 # Build React App
 npm install
-PUBLIC_URL="/react" BUILD_PATH="./build" npx --yes react-scripts build
+PUBLIC_URL="/react" BUILD_PATH="./build" npm run build
+rsync -r ./build/ ./django/build
 mv ./build/* ./django/build
 rmdir ./build
 
