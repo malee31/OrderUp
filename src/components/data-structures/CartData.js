@@ -144,7 +144,7 @@ export default function CartProvider({ children }) {
 		antiRaceConditionSyncQueue.current.push(syncRequestFunc);
 		// Silently execute queue
 		executeQueue().catch(() => {});
-	}, [cartValue.cartId, cartValue.items])
+	}, [cartValue.cartId, cartValue.items, cartValue.loaded]);
 
 	return (
 		<CartContext.Provider value={cartValue}>
