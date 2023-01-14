@@ -7,9 +7,7 @@ pip install -r requirements.txt
 # Build React App
 npm install
 PUBLIC_URL="/react" BUILD_PATH="./build" npm run build
-rsync -r ./build/ ./django/build
-mv ./build/* ./django/build
-rmdir ./build
+rsync -r --del ./build/ ./django/build
 
 cd django
 python manage.py migrate
