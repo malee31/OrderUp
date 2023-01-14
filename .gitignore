@@ -20,7 +20,10 @@ node_modules/
 
 # production
 django
+build/
 !build/.gitkeep
+django/build/
+!django/build/.gitkeep
 
 # misc
 .DS_Store

@@ -4,7 +4,9 @@ set -o errexit
 
 pip install -r requirements.txt
 
-PUBLIC_URL="/react" BUILD_PATH="./django/build" npx --yes react-scripts build
+PUBLIC_URL="/react" BUILD_PATH="./build" npx --yes react-scripts build
+mv ./build/* ./django/build
+rmdir ./build
 
 cd django
 python manage.py migrate
