@@ -4,6 +4,8 @@ set -o errexit
 
 pip install -r requirements.txt
 
+# Build React App
+npm install
 PUBLIC_URL="/react" BUILD_PATH="./build" npx --yes react-scripts build
 mv ./build/* ./django/build
 rmdir ./build
