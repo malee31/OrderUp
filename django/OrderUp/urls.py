@@ -27,6 +27,7 @@ urlpatterns = [
     path('menu/', include('menu.urls')),  # All things menu related
     path('cart/', include('cart.urls')),  # All things cart related
     path('order/', include('order.urls')),  # All things order related
+    path('images/', include('images.urls')),  # All things image related
     re_path(r'^react/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
 ]
 

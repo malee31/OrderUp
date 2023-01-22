@@ -8,12 +8,10 @@ load_dotenv()
 # Set base directory for absolute path creation
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Django development settings
 # WARNING: Keep SECRET_KEY a secret and regenerate or make up a new one if exposed
 SECRET_KEY = getenv("SECRET_KEY")
 DEBUG = getenv("DEBUG", default="False") == "True"
-
 
 # Django site configurations
 ALLOWED_HOSTS = getenv("ALLOWED_HOSTS", default="").split(",")
@@ -21,12 +19,12 @@ APPEND_SLASH = False
 ROOT_URLCONF = 'OrderUp.urls'
 WSGI_APPLICATION = 'OrderUp.wsgi.application'
 
-
 # Django app, plugins, and middleware configurations
 INSTALLED_APPS = [
     'menu',
     'cart',
     'order',
+    'images',
     'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -47,7 +45,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-
 # Template loading (For this project, the React 'django/build/index.html' is loaded in production)
 TEMPLATES = [
     {
@@ -65,7 +62,6 @@ TEMPLATES = [
     }
 ]
 
-
 # Database configurations
 DATABASES = {
     'default': {
@@ -75,7 +71,6 @@ DATABASES = {
 }
 # Default primary key auto field type for implied ids
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 
 # Generated file configurations
 # Static files (For this project, they are all the React build files)
@@ -115,14 +110,12 @@ if S3_ENABLED:
     # TODO: Check if Cache Control is required
     AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=43200'}  # 12 Hours
 
-
 # Django internationalization metadata for translations (Unused)
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
-
 
 # Other unchanged default Django configurations
 # Password validation

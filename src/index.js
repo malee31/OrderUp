@@ -7,6 +7,7 @@ import Home from "./pages/home";
 import Menu from "./pages/menu/menu";
 import MenuAdd from "./pages/menu/menu-add";
 import Orders from "./pages/orders";
+import Upload from "./pages/upload";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -18,6 +19,7 @@ root.render(
 				<Route exact path="/menu" element={<Menu/>}/>
 				<Route exact path="/menu/add" element={<MenuAdd/>}/>
 				<Route exact path="/orders" element={<Orders/>}/>
+				<Route exact path="/upload" element={<Upload/>}/>
 				{/* TODO: Make 404 Page */}
 				<Route exact path="*" element={<Home/>}/>
 			</Routes>
