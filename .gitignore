@@ -6,6 +6,7 @@ private/
 venv/
 db.sqlite3
 staticfiles/
+mediafiles/
 __pycache__/
 
 
