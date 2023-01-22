@@ -19,7 +19,6 @@ node_modules/
 /coverage
 
 # production
-django
 build/
 !build/.gitkeep
 django/build/
