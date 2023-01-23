@@ -8,7 +8,7 @@ from .serializers import ImageSerializer
 @api_view(["POST"])
 def upload_image(request):
     """Saves a new Image"""
-    new_image = Image(location=request.FILES["fileUpload"])
+    new_image = Image(location=request.FILES["fileUpload"], image_name="File_Upload")
     new_image.save()
     return HttpResponse("Image Uploaded")
 
