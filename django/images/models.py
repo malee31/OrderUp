@@ -3,7 +3,10 @@ from datetime import datetime
 
 
 def generate_filepath(instance, filename):
-    return f"{datetime.now().strftime('%Y-%m-%d')}-{instance.image_name}.{filename.split('.').pop()}"
+    file_parts = filename.split('.')
+    file_extension = file_parts.pop()
+    file_name = instance.image_name or file_parts.join(".")
+    return f"{datetime.now().strftime('%Y-%m-%d')}-{file_name}.{file_extension}"
 
 
 class Image(models.Model):

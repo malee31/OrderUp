@@ -18,6 +18,10 @@ export default function Upload() {
 					<span className="text-lg">Choose an Image to Upload</span>
 					<input className="px-1 py-0.5 bg-gray-300 rounded" name="fileUpload" type="file" placeholder="Choose Image"/>
 				</label>
+				<label className="text-center">
+					<span className="text-lg">Image Title</span>
+					<input className="px-1 py-0.5 ml-1 bg-gray-200 rounded" name="fileName" type="text" placeholder="Image Title"/>
+				</label>
 				<button type="submit" className="block min-w-[8rem] px-4 py-2 bg-orange-300 rounded">Upload</button>
 			</form>
 		</main>
