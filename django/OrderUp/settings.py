@@ -98,13 +98,15 @@ if S3_ENABLED:
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     # Commented out STATICFILES_STORAGE to keep React build's static files separate from S3 bucket media files
     # STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
-    MEDIA_URL = getenv("S3_ACCESS_DOMAIN", getenv("S3_DOMAIN") + "/")
+    AWS_S3_DOMAIN = getenv("S3_DOMAIN")
+    MEDIA_URL = getenv("S3_ACCESS_DOMAIN", AWS_S3_DOMAIN + "/")
 
     # S3 credentials (Prefixed with AWS, but can be from any S3-compatible storage service)
     AWS_S3_ACCESS_KEY_ID = getenv("S3_ACCESS_KEY_ID")
     AWS_S3_SECRET_ACCESS_KEY = getenv("S3_SECRET_ACCESS_KEY")
     AWS_S3_REGION_NAME = getenv("S3_REGION_NAME")
     AWS_S3_ENDPOINT_URL = getenv("S3_DOMAIN")
+    AWS_S3_REGION_ENDPOINT_URL = getenv("S3_REGION_DOMAIN")
     AWS_STORAGE_BUCKET_NAME = getenv("S3_STORAGE_BUCKET_NAME")
     AWS_DEFAULT_ACL = getenv("S3_DEFAULT_ACL")
     # TODO: Check if Cache Control is required
