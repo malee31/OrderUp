@@ -8,11 +8,13 @@ import Menu from "./pages/menu/menu";
 import MenuAdd from "./pages/menu/menu-add";
 import Orders from "./pages/orders";
 import Upload from "./pages/upload";
+import Nav from "./components/Nav";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
 	<React.StrictMode>
 		<BrowserRouter>
+			<Nav/>
 			<Routes>
 				<Route exact path="/" element={<Home/>}/>
 				<Route exact path="/home" element={<Home/>}/>

@@ -1,6 +1,6 @@
 export default function MenuAdd() {
 	return (
-		<main className="w-full h-full px-3 md:px-8 lg:px-20 xl:px-32 py-8 overflow-y-auto bg-gray-100 relative">
+		<main className="w-full h-full px-3 md:px-8 lg:px-20 xl:px-32 py-8 pt-20 overflow-y-auto bg-gray-100 relative">
 			<h1 className="text-center text-3xl">
 				Add An Item To The Menu
 			</h1>
