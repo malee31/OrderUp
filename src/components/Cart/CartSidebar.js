@@ -37,7 +37,7 @@ export default function CartSidebar({ show, setShow }) {
 		>
 			{/* Open Cart Button - Hides by sliding out to the right once clicked */}
 			<button
-				className={`absolute top-0 left-full w-12 h-12 p-1 bg-slate-200 rounded z-10 pointer-events-auto transition-transform transition-colors hover:bg-slate-300 ${!show ? "-translate-x-full" : "translate-x-0 select-none"}`}
+				className={`absolute top-2 left-full w-12 h-12 p-1 bg-slate-200 rounded-l z-10 pointer-events-auto transition-transform transition-colors hover:bg-slate-300 ${!show ? "-translate-x-full" : "translate-x-0 select-none"}`}
 				tabIndex={!show ? 0 : -1}
 				aria-hidden={!show}
 				onClick={showCart}

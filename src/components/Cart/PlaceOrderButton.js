@@ -1,9 +1,11 @@
 import { useCart } from "../data-structures/CartData";
 import { ReactComponent as LoadIcon } from "../../images/Load.svg";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function PlaceOrderButton({ numCartItems }) {
 	const cart = useCart();
+	const navigate = useNavigate();
 	const [loading, setLoading] = useState(false);
 
 	const placeOrder = () => {
@@ -11,7 +13,7 @@ export default function PlaceOrderButton({ numCartItems }) {
 		console.log("Attempting To Place An Order");
 		fetch(`/cart/place/${cart.cartId}`)
 			.then(res => {
-				console.log(res.status)
+				console.log(res.status);
 				if(res.status === 200) {
 					console.log("Order Placed");
 					cart.updateCart({ items: [] });
@@ -19,6 +21,7 @@ export default function PlaceOrderButton({ numCartItems }) {
 					console.warn(`Failed To Place Order [Status: ${res.status}]`);
 				}
 				setLoading(false);
+				navigate("/orders");
 			})
 			.catch(err => {
 				console.warn("Unable To Place An Order:");
@@ -28,7 +31,8 @@ export default function PlaceOrderButton({ numCartItems }) {
 
 	return (
 		<button
-			className="w-full px-6 py-3 bg-orange-300 hover:bg-orange-400 transition-colors group"
+			className={`w-full px-6 py-3 bg-orange-300 transition-colors group ${loading ? "cursor-default" : "hover:bg-orange-400 cursor-pointer"}`}
+			disabled={loading}
 			onClick={placeOrder}
 		>
 			Place Order
