@@ -11,5 +11,6 @@ rsync -r --del ./build/ ./django/build
 
 cd django
 python manage.py migrate
-python manage.py loaddata ./order/fixtures/menu-fixture.json
+python manage.py loaddata menu-fixture
+python manage.py loaddata order-fixture
 python manage.py collectstatic --no-input

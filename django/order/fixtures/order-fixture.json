@@ -1,0 +1,68 @@
+[
+{
+    "model": "order.order",
+    "pk": 1,
+    "fields": {
+        "fulfilled": true
+    }
+},
+{
+    "model": "order.order",
+    "pk": 2,
+    "fields": {
+        "fulfilled": false
+    }
+},
+{
+    "model": "order.order",
+    "pk": 3,
+    "fields": {
+        "fulfilled": false
+    }
+},
+{
+    "model": "order.itemorder",
+    "pk": 1,
+    "fields": {
+        "item": 1,
+        "count": 1,
+        "order": 1
+    }
+},
+{
+    "model": "order.itemorder",
+    "pk": 2,
+    "fields": {
+        "item": 3,
+        "count": 2,
+        "order": 1
+    }
+},
+{
+    "model": "order.itemorder",
+    "pk": 3,
+    "fields": {
+        "item": 4,
+        "count": 1,
+        "order": 1
+    }
+},
+{
+    "model": "order.itemorder",
+    "pk": 4,
+    "fields": {
+        "item": 4,
+        "count": 1,
+        "order": 2
+    }
+},
+{
+    "model": "order.itemorder",
+    "pk": 5,
+    "fields": {
+        "item": 3,
+        "count": 2,
+        "order": 3
+    }
+}
+]
