@@ -3,6 +3,14 @@ import { useCart } from "../data-structures/CartData";
 export default function MenuItem({ name, item_id, description }) {
 	const cart = useCart();
 
+	const addItem = () => {
+		cart.addItem({
+			item_id: item_id,
+			name: name,
+			description: description
+		})
+	};
+
 	return (
 		<div className="w-full max-w-[1000px] px-4 py-2 mx-auto my-4 rounded-md shadow-md bg-slate-50 border-transparent border-2 transition-[box-shadow,background-color] hover:shadow-lg hover:bg-white">
 			<h3 className="text-xl">{name}</h3>
@@ -21,11 +29,7 @@ export default function MenuItem({ name, item_id, description }) {
 				</p>
 				<button
 					className="px-2 py-1 absolute bottom-0 right-0 bg-orange-300 rounded select-none transition-[box-shadow] hover:shadow-md"
-					onClick={() => cart.addItem({
-						item_id: item_id,
-						name: name,
-						description: description
-					})}
+					onClick={addItem}
 				>
 					Add to Cart
 				</button>

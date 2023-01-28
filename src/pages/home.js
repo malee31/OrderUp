@@ -1,10 +1,10 @@
 import {Link} from "react-router-dom";
-import receiptPNG from "../images/receipt-printer.png";
+import sandwichJPG from "../images/sandwich-splash-resized.jpg";
 
 export default function Home() {
 	return (
 		<>
-			<section className="w-full h-full flex flex-col-reverse md:flex-row">
+			<section className="w-full h-full flex flex-col-reverse pt-16 md:pt-0 md:flex-row">
 				<div className="md:w-3/5 h-full px-8 py-4 flex flex-col justify-center">
 					<h1 className="text-4xl">OrderUp</h1>
 					<h2 className="text-xl text-gray-600 mt-2 mb-1 px-1">On The Go, At Your Own Pace</h2>
@@ -18,11 +18,11 @@ export default function Home() {
 						</Link>
 					</div>
 				</div>
-				<div className="bg-orange-400 md:w-2/5 h-full px-4 py-8 flex flex-col justify-center items-center overflow-hidden">
+				<div className="bg-orange-400 w-full md:w-2/5 h-full overflow-hidden">
 					<img
-						className="h-full md:h-auto md:w-full max-w-[400px]"
-						src={receiptPNG}
-						alt="Receipt Printer"
+						className="w-full h-full object-cover"
+						src={sandwichJPG}
+						alt="Delicious Sandwich"
 					/>
 				</div>
 			</section>
