@@ -1,10 +1,10 @@
-import { useCart } from "../data-structures/CartData";
-import { ReactComponent as ChevronRight } from "../../images/ChevronRight.svg";
-import { ReactComponent as CartIcon } from "../../images/Cart.svg";
 import { useCallback, useEffect, useRef } from "react";
-import clickInsideOf from "../../utilities/clickInsideOf";
 import CartItem from "./CartItem";
 import PlaceOrderButton from "./PlaceOrderButton";
+import { useCart } from "../data-structures/CartData";
+import clickInsideOf from "../../utilities/clickInsideOf";
+import { ReactComponent as CartIcon } from "../../images/Cart.svg";
+import { ReactComponent as ChevronRight } from "../../images/ChevronRight.svg";
 
 export default function CartSidebar({ show, setShow }) {
 	const cart = useCart();
