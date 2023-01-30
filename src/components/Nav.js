@@ -1,7 +1,8 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import logoIcon from "../images/logo.svg";
 import { ReactComponent as TripleBars } from "../images/TripleBars.svg";
+import clickInsideOf from "../utilities/clickInsideOf";
 
 export default function Nav() {
 	return (
@@ -30,9 +31,32 @@ function DesktopNavLinks() {
 }
 
 function MobileNav() {
+	const location = useLocation();
 	const [open, setOpen] = useState(false);
+	const mobileNavRef = useRef();
+
+	// Dismiss navbar when an option is chosen
+	useEffect(() => {
+		setOpen(false);
+	}, [location]);
+
+	// Dismiss navbar when anywhere else is clicked
+	useEffect(() => {
+		if(!mobileNavRef.current) return;
+		const listener = e => {
+			if(clickInsideOf(mobileNavRef.current, e)) return;
+			setOpen(false);
+		};
+
+		document.addEventListener("click", listener);
+		return () => document.removeEventListener("click", listener);
+	}, []);
+
 	return (
-		<div className="absolute top-0 left-0 w-full block sm:hidden">
+		<div
+			className="absolute top-0 left-0 w-full block sm:hidden"
+			ref={mobileNavRef}
+		>
 			<div className="relative w-full h-16 z-10">
 
 				<button

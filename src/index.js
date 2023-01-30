@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { createBrowserRouter, createRoutesFromElements, Outlet, Route, RouterProvider } from "react-router-dom";
 import reportWebVitals from './reportWebVitals';
-import { BrowserRouter, Route, Routes } from "react-router-dom";
 import './index.css';
 import Home from "./pages/home";
 import Menu from "./pages/menu/menu";
@@ -10,22 +10,25 @@ import Orders from "./pages/orders";
 import Upload from "./pages/upload";
 import Nav from "./components/Nav";
 
+const router = createBrowserRouter(
+	createRoutesFromElements(
+		<Route path="" element={<><Nav/><Outlet/></>}>
+			<Route exact path="/" element={<Home/>}/>
+			<Route exact path="/home" element={<Home/>}/>
+			<Route exact path="/menu" element={<Menu/>}/>
+			<Route exact path="/menu/add" element={<MenuAdd/>}/>
+			<Route exact path="/orders" element={<Orders/>}/>
+			<Route exact path="/upload" element={<Upload/>}/>
+			{/* TODO: Make 404 Page */}
+			<Route exact path="*" element={<Home/>}/>
+		</Route>
+	)
+);
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
 	<React.StrictMode>
-		<BrowserRouter>
-			<Nav/>
-			<Routes>
-				<Route exact path="/" element={<Home/>}/>
-				<Route exact path="/home" element={<Home/>}/>
-				<Route exact path="/menu" element={<Menu/>}/>
-				<Route exact path="/menu/add" element={<MenuAdd/>}/>
-				<Route exact path="/orders" element={<Orders/>}/>
-				<Route exact path="/upload" element={<Upload/>}/>
-				{/* TODO: Make 404 Page */}
-				<Route exact path="*" element={<Home/>}/>
-			</Routes>
-		</BrowserRouter>
+		<RouterProvider router={router}/>
 	</React.StrictMode>
 );
 
