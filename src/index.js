@@ -16,7 +16,7 @@ const router = createBrowserRouter(
 			<Route exact path="/" element={<Home/>}/>
 			<Route exact path="/home" element={<Home/>}/>
 			<Route exact path="/menu" element={<Menu/>}/>
-			<Route exact path="/menu/add" element={<MenuAdd/>}/>
+			<Route exact path="/menu/new" element={<MenuAdd/>}/>
 			<Route exact path="/orders" element={<Orders/>}/>
 			<Route exact path="/upload" element={<Upload/>}/>
 			{/* TODO: Make 404 Page */}

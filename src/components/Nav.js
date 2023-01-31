@@ -89,7 +89,7 @@ function AllNavLinks() {
 				Menu
 			</StyledNavLink>
 
-			<StyledNavLink to="/menu/add">
+			<StyledNavLink to="/menu/new">
 				Add to Menu
 			</StyledNavLink>
 
