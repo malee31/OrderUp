@@ -12,7 +12,7 @@ import { ReactComponent as RemoveIcon } from "../../images/Remove.svg";
  * @return {JSX.Element}
  * @constructor
  */
-export default function CartItem({ item, count }) {
+export default function CartItem({ show, item, count }) {
 	const [countInputVal, setCountInputVal] = useState(count);
 	const [showRemoveModal, setShowRemoveModal] = useState(false);
 	const cart = useCart();
@@ -60,11 +60,11 @@ export default function CartItem({ item, count }) {
 
 	return (
 		<div className="w-full mb-2 bg-slate-50 rounded relative shadow hover:shadow-md transition-shadow">
-			<CartItemDeleteConfirmation itemName={item.name} show={showRemoveModal} setShow={setShowRemoveModal} onConfirm={removeItem}/>
 			<div className="w-full h-full grid grid-rows-1 grid-cols-[auto_minmax(0,_1fr)_auto]">
 				<button
 					className="w-8 h-full px-1 text-md text-slate-400 rounded-l border-r border-slate-200 hover:bg-red-700 hover:text-slate-50 transition-colors select-none"
 					onClick={() => setShowRemoveModal(true)}
+					tabIndex={show && !showRemoveModal ? 0 : -1}
 				>
 					<RemoveIcon/>
 				</button>
@@ -80,6 +80,7 @@ export default function CartItem({ item, count }) {
 					<button
 						className="w-6 h-6 rounded-full shadow-md z-10 bg-slate-50 box-content border border-slate-200 select-none hover:bg-slate-100"
 						onClick={() => updateCount(count - 1)}
+						tabIndex={show && !showRemoveModal ? 0 : -1}
 					>
 						<MinusIcon/>
 					</button>
@@ -91,14 +92,17 @@ export default function CartItem({ item, count }) {
 						onChange={e => !isNaN(Number(e.target.value)) && Number(e.target.value) >= 0 && setCountInputVal(Number(e.target.value))}
 						onBlur={() => updateCount(countInputVal)}
 						value={countInputVal}
+						tabIndex={show && !showRemoveModal ? 0 : -1}
 					/>
 					<button
 						className="w-6 h-6 rounded-full shadow-md z-10 bg-orange-200 box-content border border-slate-200 select-none hover:bg-orange-300"
 						onClick={() => updateCount(count + 1)}
+						tabIndex={show && !showRemoveModal ? 0 : -1}
 					>
 						<PlusIcon/>
 					</button>
 				</div>
+				<CartItemDeleteConfirmation itemName={item.name} show={show && showRemoveModal} setShow={setShowRemoveModal} onConfirm={removeItem}/>
 			</div>
 		</div>
 	);

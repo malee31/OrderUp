@@ -37,4 +37,13 @@
 	.input-number-no-spin {
 		-moz-appearance: textfield;
 	}
+
+	.fade-in {
+		animation: fade-in ease-in-out;
+	}
+}
+
+@keyframes fade-in {
+	from { opacity: 0 }
+	to { opacity: 0.25 }
 }

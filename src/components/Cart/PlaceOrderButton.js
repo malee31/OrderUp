@@ -3,7 +3,7 @@ import { ReactComponent as LoadIcon } from "../../images/Load.svg";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function PlaceOrderButton({ numCartItems }) {
+export default function PlaceOrderButton({ show, numCartItems }) {
 	const cart = useCart();
 	const navigate = useNavigate();
 	const [loading, setLoading] = useState(false);
@@ -33,6 +33,7 @@ export default function PlaceOrderButton({ numCartItems }) {
 		<button
 			className={`w-full px-6 py-3 bg-orange-300 transition-colors group ${loading ? "cursor-default" : "hover:bg-orange-400 cursor-pointer"}`}
 			disabled={loading}
+			tabIndex={show ? 0 : -1}
 			onClick={placeOrder}
 		>
 			Place Order
