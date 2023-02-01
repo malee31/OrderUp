@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom";
+
 export default function MenuAdd() {
 	return (
 		<main className="w-full h-full px-3 md:px-8 lg:px-20 xl:px-32 py-8 pt-20 overflow-y-auto bg-gray-100 relative">
@@ -14,6 +16,7 @@ export default function MenuAdd() {
 }
 
 function MenuItemForm() {
+	const navigate = useNavigate();
 	const submit = e => {
 		e.preventDefault();
 		console.log(e)
@@ -34,11 +37,12 @@ function MenuItemForm() {
 			.then(res => res.text())
 			.then(console.log)
 			.then(() => e.target.reset())
+			.then(() => navigate("/menu"))
 			.catch(err => {
 				console.warn("Unable To Add New Menu Item:");
 				console.error(err);
 			});
-	}
+	};
 
 	return (
 		<form
@@ -47,20 +51,24 @@ function MenuItemForm() {
 		>
 			<h3 className="text-center text-xl">Add An Item</h3>
 			<hr className="mt-2 mb-4"/>
-			<label className="block">
-				<span className="block text-lg">Item Name</span>
-				<input
-					className="w-[360px] max-w-full px-2 py-1 border-2 rounded-md"
-					name="item-name"
-				/>
-			</label>
-			<label className="block">
-				<span className="block text-lg">Item Description</span>
-				<textarea
-					className="min-w-[360px] w-[50%] max-w-full h-32 px-2 py-1 border-2 rounded-md"
-					name="item-desc"
-				/>
-			</label>
+			<div className="block w-fit max-w-full">
+				<label className="block">
+					<span className="block text-lg">Item Name</span>
+					<input
+						className="w-[360px] max-w-full px-2 py-1 border-2 rounded-md"
+						name="item-name"
+					/>
+				</label>
+			</div>
+			<div className="block w-fit max-w-full">
+				<label className="block w-[360px] max-w-full">
+					<span className="block text-lg">Item Description</span>
+					<textarea
+						className="max-w-[360px] w-full h-32 px-2 py-1 border-2 rounded-md"
+						name="item-desc"
+					/>
+				</label>
+			</div>
 			<button
 				className="block text-lg px-3 py-1.5 mt-2 border-2 bg-orange-200 transition-colors hover:bg-orange-300 rounded shadow-md"
 				type="submit"
