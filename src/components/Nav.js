@@ -2,9 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import logoIcon from "../images/logo.svg";
 import { ReactComponent as TripleBars } from "../images/TripleBars.svg";
+import { ReactComponent as CartIcon } from "../images/Cart.svg";
 import clickInsideOf from "../utilities/clickInsideOf";
+import { useCart } from "./data-structures/CartData";
 
 export default function Nav() {
+	const location = useLocation();
+	const showCartIcon = location.pathname === "/menu" || location.pathname === "/menu/";
+
 	return (
 		<nav className="absolute top-0 w-full h-16 pl-2 pr-4 flex flex-row items-center bg-orange-300 z-20">
 			<div className="h-full aspect-square p-2 z-50">
@@ -16,24 +21,34 @@ export default function Nav() {
 				</Link>
 			</div>
 
-			<DesktopNavLinks/>
-			<MobileNav/>
+			<DesktopNavLinks showCartIcon={showCartIcon}/>
+			<MobileNav showCartIcon={showCartIcon}/>
 		</nav>
 	);
 }
 
-function DesktopNavLinks() {
+function DesktopNavLinks({ showCartIcon = false }) {
 	return (
 		<div className="hidden sm:flex w-full h-full py-2 flex flex-row gap-2 items-center overflow-x-auto">
 			<AllNavLinks/>
+
+			{showCartIcon && (
+				<button
+					onClick={() => console.log("TODO: Open Cart Sidebar")}
+					className="absolute right-2 w-12 h-12 text-slate-50 rounded border-2 border-slate-50 hover:text-slate-200 transition-colors"
+				>
+					<CartIcon/>
+				</button>
+			)}
 		</div>
 	);
 }
 
-function MobileNav() {
+function MobileNav({ showCartIcon = false }) {
 	const location = useLocation();
 	const [open, setOpen] = useState(false);
 	const mobileNavRef = useRef();
+	const cart = useCart();
 
 	// Dismiss navbar when an option is chosen
 	useEffect(() => {
@@ -57,11 +72,18 @@ function MobileNav() {
 			className="absolute top-0 left-0 w-full block sm:hidden"
 			ref={mobileNavRef}
 		>
-			<div className="relative w-full h-16 z-10">
-
+			<div className="flex flex-row justify-end gap-2 w-full h-16 p-2 z-10">
+				{showCartIcon && (
+					<button
+						onClick={() => console.log("TODO: Open Cart Sidebar")}
+						className="w-12 h-12 text-slate-50 rounded border-2 border-slate-50 hover:text-slate-200 transition-colors"
+					>
+						<CartIcon/>
+					</button>
+				)}
 				<button
 					onClick={() => setOpen(!open)}
-					className="absolute top-2 right-2 w-12 h-12 text-slate-50 rounded border-2 border-slate-50 hover:text-slate-200 transition-colors"
+					className="w-12 h-12 text-slate-50 rounded border-2 border-slate-50 hover:text-slate-200 transition-colors"
 				>
 					<TripleBars/>
 				</button>

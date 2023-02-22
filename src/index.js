@@ -1,14 +1,15 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
+import React from "react";
+import ReactDOM from "react-dom/client";
 import { createBrowserRouter, createRoutesFromElements, Outlet, Route, RouterProvider } from "react-router-dom";
-import reportWebVitals from './reportWebVitals';
-import './index.css';
+import reportWebVitals from "./reportWebVitals";
+import "./index.css";
+import CartProvider from "./components/data-structures/CartData";
+import Nav from "./components/Nav";
 import Home from "./pages/home";
 import Menu from "./pages/menu/menu";
 import MenuAdd from "./pages/menu/menu-add";
 import Orders from "./pages/orders";
 import Upload from "./pages/upload";
-import Nav from "./components/Nav";
 
 const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -28,7 +29,9 @@ const router = createBrowserRouter(
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
 	<React.StrictMode>
-		<RouterProvider router={router}/>
+		<CartProvider>
+			<RouterProvider router={router}/>
+		</CartProvider>
 	</React.StrictMode>
 );
 

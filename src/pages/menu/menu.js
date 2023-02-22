@@ -1,5 +1,4 @@
 import { useState } from "react";
-import CartProvider from "../../components/data-structures/CartData";
 import CartSidebar from "../../components/Cart/CartSidebar";
 import MenuItem from "../../components/Menu/MenuItem";
 import MenuItemShimmer from "../../components/Menu/MenuItemShimmer";
@@ -7,11 +6,9 @@ import MenuProvider, { useMenu } from "../../components/data-structures/MenuData
 
 export default function Menu() {
 	return (
-		<CartProvider>
-			<MenuProvider>
-				<MenuView/>
-			</MenuProvider>
-		</CartProvider>
+		<MenuProvider>
+			<MenuView/>
+		</MenuProvider>
 	);
 }
 
