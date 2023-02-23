@@ -1,4 +1,3 @@
-import { useState } from "react";
 import CartSidebar from "../../components/Cart/CartSidebar";
 import MenuItem from "../../components/Menu/MenuItem";
 import MenuItemShimmer from "../../components/Menu/MenuItemShimmer";
@@ -13,7 +12,6 @@ export default function Menu() {
 }
 
 function MenuView() {
-	const [showCart, setShowCart] = useState(false);
 	const menu = useMenu();
 	const menuItems = menu.menuItems;
 	const loading = !menu.loaded;
@@ -34,7 +32,7 @@ function MenuView() {
 			{menuItems.map(item => (
 				<MenuItem key={item.item_id} {...item}/>
 			))}
-			<CartSidebar show={showCart} setShow={setShowCart}/>
+			<CartSidebar/>
 		</main>
 	);
 }

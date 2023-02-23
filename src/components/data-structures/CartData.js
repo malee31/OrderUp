@@ -16,11 +16,12 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
  * @typedef {Object & CartData} CartContextValue
  * @property {function} updateCart - Overwrites the current cart with the portion of data given to this function. Unspecified properties are unaffected
  * @property {function} addItem - Given an item object, the item is added to the cart with a count of 1 or the count is increased
+ * @property {function} setOpen - Set whether the cart UI should be open
+ * @property {boolean} open - Whether the cart UI should be open
  */
 
 /** @type Context<CartContextValue>|Context<{}> */
 const CartContext = createContext({});
-
 
 /**
  * Allows read and write access to the current cart
@@ -32,6 +33,7 @@ export function useCart() {
 }
 
 export default function CartProvider({ children }) {
+	const [cartOpen, setCartOpen] = useState(false);
 	const [cart, setCart] = useState({
 		cartId: "DEMO",
 		items: [],
@@ -64,9 +66,11 @@ export default function CartProvider({ children }) {
 		return {
 			...cart,
 			addItem,
-			updateCart
+			updateCart,
+			open: cartOpen,
+			setOpen: setCartOpen
 		};
-	}, [cart, addItem, updateCart]);
+	}, [cart, addItem, updateCart, cartOpen]);
 
 	// Attempt to load cart from server
 	useEffect(() => {

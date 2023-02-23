@@ -28,13 +28,15 @@ export default function Nav() {
 }
 
 function DesktopNavLinks({ showCartIcon = false }) {
+	const cart = useCart();
+
 	return (
 		<div className="hidden sm:flex w-full h-full py-2 flex flex-row gap-2 items-center overflow-x-auto">
 			<AllNavLinks/>
 
 			{showCartIcon && (
 				<button
-					onClick={() => console.log("TODO: Open Cart Sidebar")}
+					onClick={() => cart.setOpen(true)}
 					className="absolute right-2 w-12 h-12 text-slate-50 rounded border-2 border-slate-50 hover:text-slate-200 transition-colors"
 				>
 					<CartIcon/>
@@ -75,7 +77,7 @@ function MobileNav({ showCartIcon = false }) {
 			<div className="flex flex-row justify-end gap-2 w-full h-16 p-2 z-10">
 				{showCartIcon && (
 					<button
-						onClick={() => console.log("TODO: Open Cart Sidebar")}
+						onClick={() => cart.setOpen(true)}
 						className="w-12 h-12 text-slate-50 rounded border-2 border-slate-50 hover:text-slate-200 transition-colors"
 					>
 						<CartIcon/>

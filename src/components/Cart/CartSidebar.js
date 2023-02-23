@@ -1,44 +1,23 @@
-import { useCallback, useEffect, useRef } from "react";
 import CartItem from "./CartItem";
 import PlaceOrderButton from "./PlaceOrderButton";
 import { useCart } from "../data-structures/CartData";
-import clickInsideOf from "../../utilities/clickInsideOf";
 import { ReactComponent as CartIcon } from "../../images/Cart.svg";
 import { ReactComponent as ChevronRight } from "../../images/ChevronRight.svg";
 
-export default function CartSidebar({ show, setShow }) {
-	const showCart = useCallback(() => setShow(true), [setShow]);
-	const hideCart = useCallback(() => setShow(false), [setShow]);
-	const cartSidebarRef = useRef();
-	useEffect(() => {
-		if(!cartSidebarRef.current) return;
-
-		const listener = e => {
-			if(clickInsideOf(cartSidebarRef.current, e)) return;
-			// Exclude click events that have detached from dom like removing from cart
-			if(!e.target.isConnected) {
-				// console.log("Not hiding from external click due to detached node");
-				return;
-			}
-			// console.log("Hiding from external click")
-			hideCart();
-		};
-
-		document.addEventListener("click", listener);
-		return () => document.removeEventListener("click", listener);
-	}, [hideCart]);
+export default function CartSidebar() {
+	const cart = useCart();
 
 	return (
 		<div
 			className="fixed top-0 left-0 w-full h-full overflow-hidden z-30 pointer-events-none"
-			ref={cartSidebarRef}
 		>
-			<div className={`absolute top-0 left-0 w-full h-full pointer-events-auto bg-transparent transition-colors ${show ? "block opacity-25 duration-500 fade-in bg-slate-400" : "hidden"}`} onClick={hideCart}/>
-			{/* Open Cart Button - Hides by sliding out to the right once clicked */}
-			<CartButton show={!show} onClick={showCart}/>
+			<div
+				className={`absolute top-0 left-0 w-full h-full pointer-events-auto bg-transparent transition-colors ${cart.open ? "block opacity-25 duration-500 fade-in bg-slate-400" : "hidden"}`}
+				onClick={() => cart.setOpen(false)}
+			/>
 
 			{/* Cart Sidebar - Shows by sliding in from the right once toggled */}
-			<CartSidebarSection show={show} closeCart={hideCart}/>
+			<CartSidebarSection show={cart.open} closeCart={() => cart.setOpen(false)}/>
 		</div>
 	);
 }
