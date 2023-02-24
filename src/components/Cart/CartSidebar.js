@@ -22,21 +22,21 @@ export default function CartSidebar() {
 	);
 }
 
-function CartButton({ show, onClick }) {
+export function CartButton(props) {
+	const { className = "", noRelative, ...extraProps } = props;
 	const cart = useCart();
 	const numCartItems = cart.items.reduce((prev, curr) => prev + curr.count, 0);
 
 	return (
 		<button
-			className={`absolute bottom-8 right-0 w-16 h-16 p-1 bg-slate-200 rounded-l z-10 pointer-events-auto transition-transform transition-colors hover:bg-slate-300 ${!show ? "translate-x-full" : "translate-x-0 select-none"}`}
-			tabIndex={show ? 0 : -1}
-			aria-hidden={!show}
+			className={`${noRelative ? "" : "relative"} w-12 h-12 text-slate-50 rounded border-2 border-slate-50 hover:text-slate-200 transition-colors ${className}`}
+			onClick={() => cart.setOpen(true)}
 			title="Your Cart"
-			onClick={onClick}
+			{...extraProps}
 		>
 			<CartIcon/>
-			<span className="absolute bottom-3 left-0 w-full px-1 text-center">
-					<span className="block mx-auto text-center truncate bg-slate-200 bg-opacity-50 text-overflow-plus select-none">
+			<span className="absolute bottom-1 left-0 w-full px-1 text-center">
+					<span className="block mx-auto text-center truncate text-overflow-plus select-none">
 						{numCartItems}
 					</span>
 				</span>

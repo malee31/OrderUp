@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import logoIcon from "../images/logo.svg";
+import { CartButton } from "./Cart/CartSidebar";
+import { ReactComponent as LogoIcon } from "../images/logo.svg";
 import { ReactComponent as TripleBars } from "../images/TripleBars.svg";
-import { ReactComponent as CartIcon } from "../images/Cart.svg";
 import clickInsideOf from "../utilities/clickInsideOf";
-import { useCart } from "./data-structures/CartData";
 
 export default function Nav() {
 	const location = useLocation();
@@ -14,10 +13,11 @@ export default function Nav() {
 		<nav className="absolute top-0 w-full h-16 pl-2 pr-4 flex flex-row items-center bg-orange-300 z-20">
 			<div className="h-full aspect-square p-2 z-50">
 				<Link
+					aria-label="OrderUp Home"
 					to="/home"
 					className="block h-full aspect-square rounded bg-orange-50"
 				>
-					<img className="w-full h-full" src={logoIcon} alt="OrderUp"/>
+					<LogoIcon/>
 				</Link>
 			</div>
 
@@ -28,19 +28,11 @@ export default function Nav() {
 }
 
 function DesktopNavLinks({ showCartIcon = false }) {
-	const cart = useCart();
-
 	return (
 		<div className="hidden sm:flex w-full h-full py-2 flex flex-row gap-2 items-center overflow-x-auto">
 			<AllNavLinks/>
-
 			{showCartIcon && (
-				<button
-					onClick={() => cart.setOpen(true)}
-					className="absolute right-2 w-12 h-12 text-slate-50 rounded border-2 border-slate-50 hover:text-slate-200 transition-colors"
-				>
-					<CartIcon/>
-				</button>
+				<CartButton noRelative={true} className="absolute right-2"/>
 			)}
 		</div>
 	);
@@ -50,7 +42,6 @@ function MobileNav({ showCartIcon = false }) {
 	const location = useLocation();
 	const [open, setOpen] = useState(false);
 	const mobileNavRef = useRef();
-	const cart = useCart();
 
 	// Dismiss navbar when an option is chosen
 	useEffect(() => {
@@ -76,12 +67,7 @@ function MobileNav({ showCartIcon = false }) {
 		>
 			<div className="flex flex-row justify-end gap-2 w-full h-16 p-2 z-10">
 				{showCartIcon && (
-					<button
-						onClick={() => cart.setOpen(true)}
-						className="w-12 h-12 text-slate-50 rounded border-2 border-slate-50 hover:text-slate-200 transition-colors"
-					>
-						<CartIcon/>
-					</button>
+					<CartButton/>
 				)}
 				<button
 					onClick={() => setOpen(!open)}
