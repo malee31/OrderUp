@@ -21,6 +21,7 @@ export default function PlaceOrderButton({ show, numCartItems }) {
 					console.warn(`Failed To Place Order [Status: ${res.status}]`);
 				}
 				setLoading(false);
+				cart.setOpen(false);
 				navigate("/orders");
 			})
 			.catch(err => {
