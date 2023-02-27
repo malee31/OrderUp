@@ -46,7 +46,7 @@ function MenuItemForm() {
 
 	return (
 		<form
-			className="w-full max-w-[1000px] px-10 py-4 mx-auto my-4 rounded-md shadow-md bg-slate-50 border-transparent border-2 transition-[box-shadow,background-color] hover:shadow-lg hover:bg-white"
+			className="w-full max-w-[1000px] px-10 py-4 mx-auto my-4 rounded-md shadow-md bg-slate-50 border-transparent border-2 transition-[box-shadow] hover:shadow-lg"
 			onSubmit={submit}
 		>
 			<h3 className="text-center text-xl">Add An Item</h3>

@@ -29,7 +29,7 @@ export function CartButton(props) {
 
 	return (
 		<button
-			className={`${noRelative ? "" : "relative"} w-12 h-12 text-slate-50 rounded border-2 border-slate-50 hover:text-slate-200 transition-colors ${className}`}
+			className={`${noRelative ? "" : "relative"} w-12 h-12 text-neutral-900 rounded border-2 border-slate-50 hover:bg-orange-200 transition-colors ${className}`}
 			onClick={() => cart.setOpen(true)}
 			title="Your Cart"
 			{...extraProps}
